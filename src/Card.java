@@ -31,9 +31,8 @@ public class Card extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (isFaceUp) {
                     Card c = Card.this;
-                    Vector<Card> cards = new Vector<>();
+                    Vector<Card> cards = new Vector<Card>();
                     boolean alreadySelected = c.selected();
-
                     if (spiderSolitaire.hasSelectedCards()) {
                         if (spiderSolitaire.getCards().get(0) == c) {
                             while (c != null) {
@@ -53,24 +52,30 @@ public class Card extends JPanel {
                                     cardToAdd = cardToAdd.getChild();
                                 }
                                 spiderSolitaire.deselectCards();
-
-                                if (!cPile.empty() && !cPile.bottom().faceUp()) {
-                                    cPile.bottom().flip();
-                                }
+                                if (!cPile.empty() && !cPile.bottom().faceUp())
+                                    cPile.bottom().flip();  
                             }
                         } else {
-                            for (Card card : spiderSolitaire.getCards()) {
-                                card.deselect();
+                            for (int i = 0; i < spiderSolitaire.getCards().size(); i++) {
+                                spiderSolitaire.getCards().get(i).deselect();
                             }
                             spiderSolitaire.deselectCards();
                         }
-                    } else if (!alreadySelected && c.isLegalStack()) {
-                        while (c != null) {
-                            c.select();
-                            cards.add(c);
-                            c = c.getChild();
+                    } else {
+                        if (alreadySelected) {
+                            while (c != null) {
+                                c.deselect();
+                                c = c.getChild();
+                            }
+                            spiderSolitaire.deselectCards();
+                        } else if (c.isLegalStack()) {  
+                            while (c != null) {
+                                c.select();
+                                cards.add(c);
+                                c = c.getChild();
+                            }
+                            spiderSolitaire.selectCards(cards);
                         }
-                        spiderSolitaire.selectCards(cards);
                     }
                     pile.recalcSize();
                     spiderSolitaire.checkWin();
@@ -79,29 +84,15 @@ public class Card extends JPanel {
         });
 
         try {
-            frontImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()))
-                            .getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            backImage = ImageIO.read(getClass().getResourceAsStream("assets/red_back.png"))
-                            .getScaledInstance(95, 145, Image.SCALE_SMOOTH);
+            Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
+            frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
+            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/red_back.png"));
+            backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         setOpaque(false);
         setPreferredSize(new Dimension(115, 145));
-    }
-
-    public boolean isLegalStack() {
-        Card current = this;
-        Card next = this.getChild();
-        while (next != null) {
-            if (current.getSuit() != next.getSuit() || current.getRank() != next.getRank() + 1) {
-                return false;
-            }
-            current = next;
-            next = next.getChild();
-        }
-        return true;
     }
 
     public void flip() {
@@ -130,9 +121,7 @@ public class Card extends JPanel {
     }
 
     public void take() {
-        if (pile != null) {
-            pile.take(this);
-        }
+        getPile().take(this);
     }
 
     public boolean hasChild() {
@@ -153,8 +142,29 @@ public class Card extends JPanel {
         return isSelected;
     }
 
+    public boolean isLegalStack() {
+        Card c = this;
+        Card next = c.getChild();
+        while (next != null) {
+            if (c.getSuit() != next.getSuit() || c.getRank() != next.getRank() + 1) {
+                return false;
+            }
+            c = next;
+            next = next.getChild();
+        }
+        return true;
+    }
+
     private String getImagePath() {
-        return "assets/" + rank + suit.name().charAt(0) + ".png";
+        StringBuilder imgPath = new StringBuilder("assets/");
+        imgPath.append(getRank());
+        imgPath.append(getSuit().name().charAt(0));
+        imgPath.append(".png");
+        return imgPath.toString();
+    }
+
+    public String toString() {
+        return getRank() + " of " + getSuit() + (isFaceUp ? " (face-up)" : "");
     }
 
     protected void paintComponent(Graphics g) {
