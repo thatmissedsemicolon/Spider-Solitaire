@@ -20,11 +20,13 @@ class Game {
     public Game(int level) {
         this.difficultyLevel = level;
 
+        Color backgroundColor = new Color(30, 165, 20);
+
         // Create the main game window
         gameFrame = new JFrame("Solitaire");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        gameFrame.getContentPane().setBackground(new Color(25, 160, 15));
+        gameFrame.getContentPane().setBackground(backgroundColor);
         gameFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
@@ -34,8 +36,6 @@ class Game {
         // Initialize the game deck and piles
         gameDeck = new Deck(difficultyLevel, this);
         gamePiles = new Pile[10];
-
-        Color backgroundColor = new Color(25, 160, 15);
 
         // Get the screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
