@@ -104,14 +104,24 @@ public class Pile extends JPanel {
     }
 
     // Find the first face-up King card in the pile
+    // private Card findFirstFaceUpKing() {
+    //     for (Card card : cards) {
+    //         if (card.getRank() == 13 && card.faceUp()) {
+    //             return card; // King card to start check
+    //         }
+    //     }
+    //     return null;
+    // }
+
     private Card findFirstFaceUpKing() {
-        for (Card card : cards) {
+        for (int i = 0; i < cards.size(); i++) {
+            Card card = cards.get(i);
             if (card.getRank() == 13 && card.faceUp()) {
-                return card; // King card to start check
+                return card; // Found a face-up King card
             }
         }
-        return null;
-    }
+        return null; // No face-up King card found
+    }    
 
     // Find the last card in a stack starting from a given card
     private Card findLastCardInStack(Card card) {
