@@ -108,21 +108,6 @@ public class Card extends JPanel {
         return "assets/" + getRank() + getSuit().name().charAt(0) + ".png";
     }
 
-    // Get a string representation of the card
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        switch (getRank()) {
-            case 1: result.append("Ace"); break;
-            case 11: result.append("Jack"); break;
-            case 12: result.append("Queen"); break;
-            case 13: result.append("King"); break;
-            default: result.append(getRank()); break;
-        }
-        result.append(" of ").append(getSuit());
-        if (isFaceUp) result.append(" (face-up)");
-        return result.toString();
-    }
-
     // Paint the card component
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);

@@ -129,7 +129,7 @@ public class Pile extends JPanel {
                 getBottomCard().setChild(card);
             }
             card.setBounds(0, OFFSET * cards.size(), 115, 145);
-            System.out.println("Card bounds: " + card.getBounds()); // Debugging
+            // System.out.println("Card bounds: " + card.getBounds()); // Debugging
             cards.add(card);
             layeredPane.add(card, Integer.valueOf(cards.size()));
             card = card.getChild();
