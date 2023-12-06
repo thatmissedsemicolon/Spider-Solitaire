@@ -106,7 +106,7 @@ public class Pile extends JPanel {
     // Find the first face-up King card in the pile
     private Card findFirstFaceUpKing() {
         for (Card card : cards) {
-            if (card.getRank() == 13 && card.isFaceUp()) {
+            if (card.getRank() == 13 && card.faceUp()) {
                 return card; // King card to start check
             }
         }
@@ -146,7 +146,7 @@ public class Pile extends JPanel {
         Card newBottomCard = index > 0 ? cards.get(index - 1) : null;
         if (newBottomCard != null) {
             newBottomCard.setChild(null);
-            if (!newBottomCard.isFaceUp()) {
+            if (!newBottomCard.faceUp()) {
                 newBottomCard.flip();
             }
         }
