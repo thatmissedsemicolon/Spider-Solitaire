@@ -1,3 +1,8 @@
+/*
+The Card class represents a playing card in the Solitaire game.
+It handles card interactions and rendering.
+*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,172 +11,56 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class Card extends JPanel {
-    enum Suit {
-        Spades,
-        Diamonds,
-        Clubs,
-        Hearts
-    }
+    private static final int CARD_WIDTH = 95;
+    private static final int CARD_HEIGHT = 145;
+
+    enum Suit { Spades, Diamonds, Clubs, Hearts }
 
     private int rank;
     private Suit suit;
-    private boolean isFaceUp,
-            isSelected;
-    private Image frontImage,
-            backImage;
-    Card child;
-    private SpiderSolitaire spiderSolitaire;
+    private boolean isFaceUp, isSelected;
+    private Image frontImage, backImage;
+    private Card child;
+    private Game game;
     private Pile pile = null;
 
-    public Card(Suit s, int r, SpiderSolitaire solitaire) {
-        suit = s;
-        rank = r;
-        isFaceUp = false;
-        isSelected = false;
-        child = null;
-        spiderSolitaire = solitaire;
+    public Card(Suit suit, int rank, Game game) {
+        this.suit = suit;
+        this.rank = rank;
+        this.isFaceUp = false;
+        this.isSelected = false;
+        this.child = null;
+        this.game = game;
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(isFaceUp)
-                {
-                    Card c = Card.this;
-                    Vector<Card> cards = new Vector<Card>();
-                    boolean alreadySelected = c.selected();
-                    if(spiderSolitaire.hasSelectedCards())
-                    {
-                        if(spiderSolitaire.getCards().get(0) == c)
-                        // clicking the same card twice just deselects it
-                        {
-                            while(c != null)
-                            {
-                                c.deselect();
-                                c = c.getChild();
-                            }
-                            spiderSolitaire.deselectCards();
-                        }
-                        else if(spiderSolitaire.getCards().get(0).getSuit() == c.getSuit()
-                                && spiderSolitaire.getCards().get(0).getRank() == (c.getRank() - 1))
-                            // if clicking on a card which the hand can be added to
-                        {
-                            if(c.hasChild() == false)
-                            // only place cards on the bottom of a pile
-                            {
-                                Card cardToAdd = spiderSolitaire.getCards().get(0);
-                                Pile cPile = cardToAdd.getPile();
-                                cardToAdd.take();
-                                pile.addCard(cardToAdd);
-                                while (cardToAdd != null) {
-                                    cardToAdd.deselect();
-                                    cardToAdd = cardToAdd.getChild();
-                                }
-                                spiderSolitaire.deselectCards();
+        this.initializeImages();
 
-                                if (!cPile.empty() && !cPile.bottom().faceUp())
-                                    cPile.bottom().flip();  // flip the bottom card if it's face-down
-                            }
-                        }
-                        else
-                        // upon attempting an illegal move
-                        {
-                            for(int i = 0; i < spiderSolitaire.getCards().size(); i++)
-                            {
-                                spiderSolitaire.getCards().get(i).deselect();
-                            }
-                            spiderSolitaire.deselectCards();
-                        } // end of nested if-else
-                    }
-                    else{
-                        // if the hand is empty
-                        if (alreadySelected) {
-                            while (c != null) {
-                                c.deselect();
-                                c = c.getChild();
-                            }
-                            spiderSolitaire.deselectCards();
-                        }
-                        else if (c.isLegalStack()) {  // don't pick up cards that aren't in decreasing order/matching suits
-                            while (c != null) {
-                                c.select();
-                                cards.add(c);
-                                c = c.getChild();
-                            }
-                            spiderSolitaire.selectCards(cards);
-                        }
-                    }
-                    pile.recalcSize();
-                    spiderSolitaire.checkWin();
-                }
-            }
-        });
-
-        try {
-            Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
-            frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/red_back.png"));
-            backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        setOpaque(false);
-        setPreferredSize(new Dimension(115, 145));
+        this.addMouseListener(new CardMouseListener());
+        this.setPreferredSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
     }
 
-    public void flip() {
-        isFaceUp = !isFaceUp;
-    }
-
-    public boolean faceUp() {
-        return isFaceUp;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    public Suit getSuit() {
-        return suit;
-    }
-
-    public void setChild(Card c) {
-        child = c;
-    }
-
-    public Card getChild() {
-        return child;
-    }
-
-    public void take() {
-        getPile().take(this);
-    }
-
-    public boolean hasChild() {
-        return child != null;
-    }
+    public void flip() { isFaceUp = !isFaceUp; }
+    public boolean isFaceUp() { return isFaceUp; }
+    public int getRank() { return rank; }
+    public Suit getSuit() { return suit; }
+    public void setChild(Card c) { child = c; }
+    public Card getChild() { return child; }
+    public void take() { getPile().takeStack(this); }
+    public boolean hasChild() { return child != null; }
+    public boolean isSelected() { return isSelected; }
 
     public void select() {
-        isSelected = true;
-        repaint();
+        this.isSelected = true;
+        this.repaint();
     }
 
     public void deselect() {
-        isSelected = false;
-        repaint();
-    }
-
-    public boolean selected() {
-        return isSelected;
+        this.isSelected = false;
+        this.repaint();
     }
 
     public boolean isLegalStack() {
-        /*
-            checks whether the card and all its children are
-            in strictly decreasing order and have matching suits.
-        */
-        Card c = this,
-                next = this.getChild();
+        Card c = this;
+        Card next = this.getChild();
         while (next != null) {
             if (c.getSuit() != next.getSuit())
                 return false;
@@ -181,6 +70,105 @@ public class Card extends JPanel {
             next = next.getChild();
         }
         return true;
+    }
+
+    private void initializeImages() {
+        try {
+            frontImage = loadImage(getImagePath());
+            backImage = loadImage("assets/yellow.png");
+        } catch (IOException e) {
+            handleImageLoadingError(e);
+        }
+        this.setOpaque(false);
+    }
+
+    private Image loadImage(String imagePath) throws IOException {
+        return ImageIO.read(getClass().getResourceAsStream(imagePath))
+            .getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+    }
+
+    private void handleImageLoadingError(IOException e) {
+        e.printStackTrace();
+    }
+
+    private class CardMouseListener extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (!isFaceUp) {
+                return;
+            }
+
+            Card clickedCard = Card.this;
+            Vector<Card> selectedCards = new Vector<>();
+
+            if (isSelected) {
+                deselectCardChain(clickedCard);
+                game.deselectCards();
+            } else if (game.hasSelectedCards()) {
+                handleSelectedCards(clickedCard, selectedCards);
+            } else {
+                selectCardChain(clickedCard, selectedCards);
+                game.selectCards(selectedCards);
+            }
+
+            pile.recalculateSize();
+            game.isWinner();
+        }
+
+        private void handleSelectedCards(Card clickedCard, Vector<Card> selectedCards) {
+            Card firstSelectedCard = game.getCards().get(0);
+
+            if (firstSelectedCard == clickedCard) {
+                deselectCardChain(clickedCard);
+                game.deselectCards();
+            } else if (firstSelectedCard.getSuit() == clickedCard.getSuit()
+                    && firstSelectedCard.getRank() == (clickedCard.getRank() - 1)) {
+                handleValidCardStack(firstSelectedCard);
+            } else {
+                deselectAllSelectedCards();
+            }
+        }
+
+        private void handleValidCardStack(Card firstSelectedCard) {
+            if (!Card.this.hasChild()) {
+                moveSelectedCardsToPile(firstSelectedCard);
+            }
+        }
+
+        private void moveSelectedCardsToPile(Card firstSelectedCard) {
+            Card cardToAdd = firstSelectedCard;
+            Pile cPile = cardToAdd.getPile();
+            cardToAdd.take();
+            pile.addCard(cardToAdd);
+            deselectAllSelectedCards();
+            if (!cPile.isEmpty() && !cPile.getBottomCard().isFaceUp()) {
+                cPile.getBottomCard().flip();
+            }
+        }
+
+        private void deselectAllSelectedCards() {
+            for (int i = 0; i < game.getCards().size(); i++) {
+                game.getCards().get(i).deselect();
+            }
+            game.deselectCards();
+        }
+
+        private void selectCardChain(Card clickedCard, Vector<Card> selectedCards) {
+            Card currentCard = clickedCard;
+            while (currentCard != null) {
+                currentCard.select();
+                selectedCards.add(currentCard);
+                currentCard = currentCard.getChild();
+            }
+        }
+
+        private void deselectCardChain(Card clickedCard) {
+            Card currentCard = clickedCard;
+            while (currentCard != null) {
+                currentCard.deselect();
+                currentCard = currentCard.getChild();
+            }
+        }
     }
 
     private String getImagePath() {
@@ -223,13 +211,6 @@ public class Card extends JPanel {
         g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 
-    Pile getPile()
-    {
-        return pile;
-    }
-
-    void setPile(Pile newPile)
-    {
-        pile = newPile;
-    }
+    Pile getPile() { return pile; }
+    void setPile(Pile newPile) { pile = newPile; }
 }

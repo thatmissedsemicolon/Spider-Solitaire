@@ -1,3 +1,8 @@
+/*
+The Pile class represents a pile of cards in the Solitaire game.
+It manages the cards in the pile and handles interactions with the pile.
+*/
+
 import java.util.Vector;
 import javax.swing.*;
 import java.awt.*;
@@ -7,132 +12,170 @@ import java.awt.event.MouseAdapter;
 public class Pile extends JPanel {
     private Vector<Card> cards;
     private JLayeredPane layeredPane;
-    private static int offset = 35;
-    private SpiderSolitaire spiderSolitaire;
+    private static final int OFFSET = 35;
+    private Game game;
 
-    public Pile(Card c, SpiderSolitaire solitaire) {
-        cards = new Vector<Card>();
-        spiderSolitaire = solitaire;
-        setOpaque(false);
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        layeredPane = new JLayeredPane();
-        addCard(c);
-        recalcSize();
-        add(layeredPane);
-    }
+    // Constructor for creating a pile with an initial card
+    public Pile(Card initialCard, Game game) {
+        this.game = game;
+        this.cards = new Vector<Card>();
+        this.configureLayout();
 
-    public Pile(Deck d, int num, SpiderSolitaire solitaire) {
-        cards = new Vector<Card>();
-        spiderSolitaire = solitaire;
-        setOpaque(false);
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        layeredPane = new JLayeredPane();
-        for (int depth = 0; depth < num; depth++) {
-            Card c = d.drawCard();
-            if (depth > 0) {
-                cards.get(depth - 1).setChild(c);
-            }
-            if (depth == num - 1)
-                c.flip();
-            c.setBounds(0, offset * depth, 115, 145);
-            cards.add(c);
-            c.setPile(this);
-            layeredPane.add(c, Integer.valueOf(depth));
+        if (initialCard != null) {
+            this.addCard(initialCard);
         }
 
-        addMouseListener(new MouseAdapter(){
+        this.recalculateSize();
+    }
+
+    // Constructor for creating a pile from a deck
+    public Pile(Deck deck, int numCards, Game game) {
+        this.game = game;
+        this.cards = new Vector<Card>();
+        this.configureLayout();
+
+        for (int depth = 0; depth < numCards; depth++) {
+            Card card = deck.drawCard();
+            if (depth > 0) {
+                cards.get(depth - 1).setChild(card);
+            }
+            if (depth == numCards - 1) {
+                card.flip();
+            }
+            card.setBounds(0, OFFSET * depth, 115, 145);
+            cards.add(card);
+            card.setPile(this);
+            layeredPane.add(card, Integer.valueOf(depth));
+        }
+
+        addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (empty() && spiderSolitaire.hasSelectedCards()) {
-                    Card cardToAdd = spiderSolitaire.getCards().get(0);
-                    cardToAdd.take();
-                    addCard(cardToAdd);
-                    while (cardToAdd != null) {
-                        cardToAdd.deselect();
-                        cardToAdd = cardToAdd.getChild();
-                    }
-                    spiderSolitaire.deselectCards();
-                }
+                handlePileClick();
             }
         });
 
-        recalcSize();
-        add(layeredPane);
+        recalculateSize();
     }
 
-    public boolean empty() {
+    // Configure the layout and layered pane
+    private void configureLayout() {
+        this.setOpaque(false);
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.layeredPane = new JLayeredPane();
+        this.add(this.layeredPane);
+    }
+
+    // Handle the click on the pile
+    private void handlePileClick() {
+        if (this.isEmpty() && this.game.hasSelectedCards()) {
+            Card cardToAdd = this.game.getCards().get(0);
+            cardToAdd.take();
+            this.addCard(cardToAdd); // Adding card to an empty space
+            this.deselectStack(cardToAdd);
+            this.game.deselectCards();
+        }
+    }
+
+    // Check if the pile is empty
+    public boolean isEmpty() {
         return cards.isEmpty();
     }
 
-    public Card top() {
-        return cards.firstElement();
+    // Get the top card in the pile
+    public Card getTopCard() {
+        return cards.isEmpty() ? null : cards.firstElement();
     }
 
-    public Card bottom() {
-        return cards.lastElement();
+    // Get the bottom card in the pile
+    public Card getBottomCard() {
+        return cards.isEmpty() ? null : cards.lastElement();
     }
 
-    public void resolve() {
-        Card c = null;
-        for (Card card : cards) {
-            if (card.getRank() == 13 && card.faceUp()) {
-                c = card;
-            }
-        }
-        if (c != null && c.isLegalStack()) {
-            Card lastCard = c;
-            while (lastCard.getChild() != null)
-                lastCard = lastCard.getChild();
+    // Check and resolve a stack if necessary
+    public void checkAndResolveStack() {
+        Card cardToCheck = this.findFirstFaceUpKing();
+        if (cardToCheck != null && cardToCheck.isLegalStack()) {
+            Card lastCard = this.findLastCardInStack(cardToCheck);
             if (lastCard.getRank() == 1) {
-                take(c);
+                this.takeStack(cardToCheck);
             }
         }
     }
 
-    void addCard(Card c) {
-        while (c != null) {
-            c.setPile(this);
-            if (cards.size() > 0)
-                bottom().setChild(c);
-            c.setBounds(0, offset * cards.size(), 115, 145);
-            cards.add(c);
-            layeredPane.add(c, Integer.valueOf(cards.size() + 1));
-            c = c.getChild();
-        }
-        resolve();
-        recalcSize();
-    }
-
-    void take(Card c) {
-        Card newBottom = null;
-        int cIndex = cards.indexOf(c);
-        if (cIndex >= 0) {
-            if (cIndex > 0) {
-                newBottom = cards.get(cIndex - 1);
-                newBottom.setChild(null);
-                if (!newBottom.faceUp())
-                    newBottom.flip();
+    // Find the first face-up King card in the pile
+    private Card findFirstFaceUpKing() {
+        for (Card card : cards) {
+            if (card.getRank() == 13 && card.isFaceUp()) {
+                return card; // King card to start check
             }
-            if (cards.size() == cIndex + 1)
-                layeredPane.removeAll();
-            else
-                while (c != null) {
-                    layeredPane.remove(c);
-                    c = c.getChild();
-                }
-            cards.subList(cIndex, cards.size()).clear();
         }
-        recalcSize();
+        return null;
     }
 
-    public void recalcSize() {
-        layeredPane.setPreferredSize(new Dimension(115, (offset * (cards.size() + 1)) + (145 - offset)));
-        revalidate();
-        repaint();
+    // Find the last card in a stack starting from a given card
+    private Card findLastCardInStack(Card card) {
+        while (card.getChild() != null) {
+            card = card.getChild();
+        }
+        return card;
     }
 
-    void select() {
-        for (Card card : cards)
-            card.select();
+    // Add a card or a stack of cards to the pile
+    public void addCard(Card card) {
+        while (card != null) {
+            card.setPile(this);
+            if (!cards.isEmpty()) {
+                getBottomCard().setChild(card);
+            }
+            card.setBounds(0, OFFSET * cards.size(), 115, 145);
+            cards.add(card);
+            layeredPane.add(card, Integer.valueOf(cards.size()));
+            card = card.getChild();
+        }
+
+        this.checkAndResolveStack();
+        this.recalculateSize();
+    }
+
+    // Take a stack of cards from the pile
+    public void takeStack(Card card) {
+        int index = cards.indexOf(card);
+        if (index < 0) return;
+
+        Card newBottomCard = index > 0 ? cards.get(index - 1) : null;
+        if (newBottomCard != null) {
+            newBottomCard.setChild(null);
+            if (!newBottomCard.isFaceUp()) {
+                newBottomCard.flip();
+            }
+        }
+
+        this.removeCardsFromLayer(card);
+        cards.subList(index, cards.size()).clear();
+        this.recalculateSize();
+    }
+
+    // Remove cards from the layered pane
+    private void removeCardsFromLayer(Card card) {
+        while (card != null) {
+            layeredPane.remove(card);
+            card = card.getChild();
+        }
+    }
+
+    // Recalculate the size of the pile
+    public void recalculateSize() {
+        layeredPane.setPreferredSize(new Dimension(115, (OFFSET * (cards.size() + 1)) + (145 - OFFSET)));
+        this.revalidate();
+        this.repaint();
+    }
+
+    // Deselect a stack of cards
+    private void deselectStack(Card card) {
+        while (card != null) {
+            card.deselect();
+            card = card.getChild();
+        }
     }
 }

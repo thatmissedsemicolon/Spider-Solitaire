@@ -1,65 +1,66 @@
+/*
+The Deck class represents a deck of cards in the Solitaire game.
+It manages the cards in the deck, including shuffling and drawing.
+*/
+
 import java.util.Stack;
 import java.util.Collections;
 
 public class Deck {
-    private Stack<Card> deck = new Stack<Card>();
-    private int numSuits;
-    private SpiderSolitaire game;
+    private Stack<Card> cards;
+    private int difficultyLevel;
+    private Game associatedGame;
 
-    // Constructor for Deck with default one suit
-    public Deck(SpiderSolitaire g) {
-        this(1, g);
+    // Constructor for creating a default deck with 1 suit
+    public Deck(Game game) {
+        this(1, game); // Default to 1 suit if not specified
     }
 
-    // Constructor for Deck with specified number of suits
-    public Deck(int n, SpiderSolitaire g) {
-        // Ensure numSuits is one of the allowed values
-        if (n != 1 && n != 2 && n != 4)
-            n = 1;
-        numSuits = n;
-        game = g;
-        populateDeck(); // Fill the deck with cards
-        shuffle(); // Shuffle the deck
+    // Constructor for creating a deck with a specified number of suits
+    public Deck(int numSuits, Game game) {
+        this.difficultyLevel = validateDifficultyLevel(numSuits);
+        this.associatedGame = game;
+        this.cards = new Stack<Card>();
+        this.initializeDeck();
+        this.shuffleDeck();
     }
 
     // Check if the deck is empty
     public boolean isEmpty() {
-        return deck.empty();
+        return cards.empty();
     }
 
-    // Get the top card without removing it
-    public Card top() {
-        Card topCard;
-        try {
-            topCard = deck.peek();
-        } catch (Exception e) {
-            topCard = null; // If the deck is empty, return null
-        }
-        return topCard;
+    // Peek at the top card of the deck without removing it
+    public Card peekTopCard() {
+        return cards.empty() ? null : cards.peek();
     }
 
-    // Draw a card from the deck
+    // Draw a card from the deck (removes and returns the top card)
     public Card drawCard() {
-        if (deck.empty()) {
-            return null; // Return null if the deck is empty
-        }
-        else
-            return deck.pop(); // Remove and return the top card
+        return cards.empty() ? null : cards.pop();
     }
 
-    // Populate the deck with cards
-    private void populateDeck() {
-        for (int suit = 0; suit < numSuits; suit++) {
-            for (int card = 0; card < 104 / numSuits; card++) {
-                Card.Suit s = Card.Suit.values()[suit]; // Choose a suit
-                int r = (card % 13) + 1;  // Cycle through ranks 1-13
-                deck.push(new Card(s, r, game)); // Add the card to the deck
+    // Validate and set the difficulty level based on the number of suits
+    private int validateDifficultyLevel(int numSuits) {
+        if (numSuits != 1 && numSuits != 2 && numSuits != 4) {
+            numSuits = 1; // Default to 1 if an invalid number is provided
+        }
+        return numSuits;
+    }
+
+    // Initialize the deck with cards based on the difficulty level
+    private void initializeDeck() {
+        for (int suitIndex = 0; suitIndex < this.difficultyLevel; suitIndex++) {
+            for (int rank = 0; rank < 104 / this.difficultyLevel; rank++) {
+                Card.Suit suit = Card.Suit.values()[suitIndex];
+                int cardRank = (rank % 13) + 1;
+                cards.push(new Card(suit, cardRank, associatedGame));
             }
         }
     }
 
     // Shuffle the deck
-    private void shuffle() {
-        Collections.shuffle(deck); // Randomly shuffle the deck
+    private void shuffleDeck() {
+        Collections.shuffle(cards);
     }
 }
