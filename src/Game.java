@@ -3,6 +3,11 @@ The Game class represents a game of Solitaire.
 It contains the main logic and functionality of the game.
 */
 
+
+// ------------------- Fix This ------------------- //
+// Make the rules go to a JEditorPane and not open a link (May or may not be allowed)
+// Add the foundation cards to the west side ()
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Vector;

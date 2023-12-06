@@ -63,7 +63,13 @@ public class Pile extends JPanel {
     private class PileMouseListener extends MouseAdapter{
         @Override
         public void mouseClicked(MouseEvent e) {
-            handlePileClick();
+            if (isEmpty() && game.hasSelectedCards()) {
+            Card cardToAdd = game.getCards().get(0);
+            cardToAdd.take();
+            addCard(cardToAdd); // Adding card to an empty space
+            deselectStack(cardToAdd);
+            game.deselectCards();
+        }
         }
     }
 
