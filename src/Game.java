@@ -5,8 +5,8 @@ It contains the main logic and functionality of the game.
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URI;
 import java.util.Stack;
+import java.net.URI;
 
 class Game {
     Deck gameDeck;
@@ -146,9 +146,11 @@ class Game {
     public void isWinner() {
         if (this.gameDeck.isEmpty()) {
             for (Pile pile : gamePiles) {
-                if (!pile.isEmpty()) return;
+                if (!pile.isEmpty())
+                    return;
             }
-            int playAgain = JOptionPane.showConfirmDialog(null, "You won!\nPlay again?", "You won!", JOptionPane.YES_NO_OPTION);
+            int playAgain = JOptionPane.showConfirmDialog(null, "You won!\nPlay again?", "You won!",
+                    JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
                 new Game(difficultyLevel);
@@ -208,13 +210,12 @@ class Game {
 
     // Show difficulty selection dialog and start a new game
     private static void showDifficultySelection() {
-        String[] options = {"Beginner", "Intermediate", "Advanced"};
+        String[] options = { "Beginner", "Intermediate", "Advanced" };
 
         int difficulty = JOptionPane.showOptionDialog(
-            null, "Select Difficulty:", "Difficulty Selection",
-            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-            null, options, options[0]
-        );
+                null, "Select Difficulty:", "Difficulty Selection",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
 
         int difficultyLevel;
         switch (difficulty) {

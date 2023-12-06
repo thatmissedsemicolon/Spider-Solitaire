@@ -6,15 +6,17 @@ It handles card interactions and rendering.
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Stack;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.util.Stack;
 
 public class Card extends JPanel {
     private static final int CARD_WIDTH = 95;
     private static final int CARD_HEIGHT = 145;
 
-    enum Suit { Spades, Diamonds, Clubs, Hearts }
+    enum Suit {
+        Spades, Diamonds, Clubs, Hearts
+    }
 
     private int rank;
     private Suit suit;
@@ -40,31 +42,49 @@ public class Card extends JPanel {
     }
 
     // Flips the card to change its face up or face down state
-    public void flip() { this.isFaceUp = !this.isFaceUp; }
+    public void flip() {
+        this.isFaceUp = !this.isFaceUp;
+    }
 
     // Checks if the card is face up
-    public boolean isFaceUp() { return this.isFaceUp; }
+    public boolean isFaceUp() {
+        return this.isFaceUp;
+    }
 
     // Gets the rank of the card
-    public int getRank() { return this.rank; }
+    public int getRank() {
+        return this.rank;
+    }
 
     // Gets the suit of the card
-    public Suit getSuit() { return this.suit; }
+    public Suit getSuit() {
+        return this.suit;
+    }
 
     // Sets the child card
-    public void setChild(Card c) { this.child = c; }
+    public void setChild(Card c) {
+        this.child = c;
+    }
 
     // Gets the child card
-    public Card getChild() { return this.child; }
+    public Card getChild() {
+        return this.child;
+    }
 
     // Takes the card from its current pile
-    public void take() { getPile().takeStack(this); }
+    public void take() {
+        getPile().takeStack(this);
+    }
 
     // Checks if the card has a child card
-    public boolean hasChild() { return this.child != null; }
+    public boolean hasChild() {
+        return this.child != null;
+    }
 
     // Checks if the card is selected
-    public boolean isSelected() { return this.isSelected; }
+    public boolean isSelected() {
+        return this.isSelected;
+    }
 
     // Selects the card and updates its appearance
     public void select() {
@@ -107,7 +127,7 @@ public class Card extends JPanel {
     // Loads an image from the specified path
     private Image loadImage(String imagePath) throws IOException {
         return ImageIO.read(getClass().getResourceAsStream(imagePath))
-            .getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+                .getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
     }
 
     // Handles errors during image loading
@@ -246,8 +266,12 @@ public class Card extends JPanel {
     }
 
     // Gets the pile to which the card belongs
-    Pile getPile() { return pile; }
+    Pile getPile() {
+        return pile;
+    }
 
     // Sets the pile to which the card belongs
-    void setPile(Pile newPile) { pile = newPile; }
+    void setPile(Pile newPile) {
+        pile = newPile;
+    }
 }
