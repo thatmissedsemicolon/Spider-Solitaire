@@ -116,25 +116,43 @@ class Game {
         boolean allSpacesFilled = true;
 
         // Check if all spaces are filled with cards
-        for (Pile p : gamePiles) {
-            if (p.isEmpty()) {
+        // for (Pile p : gamePiles) {
+        //     if (p.isEmpty()) {
+        //         allSpacesFilled = false;
+        //         break;
+        //     }
+        // }
+
+        for(int i = 0; i < 10; i++) {
+            if (gamePiles[i].isEmpty()) {
                 allSpacesFilled = false;
                 break;
-            }
+            }    
         }
 
         // Deal new cards if there are empty spaces
         if (allSpacesFilled) {
-            for (Pile pile : gamePiles) {
-                Card c = gameDeck.drawCard();
-                if (c != null) {
-                    c.flip();
-                    pile.addCard(c);
-                } else {
-                    break;
+            // for (Pile pile : gamePiles) {
+            //     Card c = gameDeck.drawCard();
+            //     if (c != null) {
+            //         c.flip();
+            //         pile.addCard(c);
+            //     } 
+            //     else
+            //         break;
+            // }
+
+            for(int i = 0; i < 10; i++) {
+                Card card = gameDeck.drawCard();
+                if(card != null) {
+                    card.flip();
+                    gamePiles[i].addCard(card);
                 }
+                else
+                    i = 10;
             }
-        } else {
+        } 
+        else {
             JOptionPane.showMessageDialog(null, "Unable to deal cards: Please ensure all empty spaces are occupied.");
         }
     }
