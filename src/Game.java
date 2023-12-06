@@ -58,7 +58,6 @@ class Game {
 
             // Add the JScrollPane to the game frame instead of the Pile directly
             gameFrame.add(pileScrollPane, gbc);
-            // gameFrame.add(gamePiles[i], gbc);
         }
 
         // Create the menu bar and add menus

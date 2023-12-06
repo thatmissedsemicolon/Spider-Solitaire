@@ -17,7 +17,7 @@ public class Card extends JPanel {
     private Suit suit;
     private boolean isFaceUp, isSelected;
     private Image frontImage, backImage;
-    Card child;
+    private Card child;
     private Game Game;
     private Pile pile = null;
 
@@ -30,41 +30,44 @@ public class Card extends JPanel {
         this.child = null;
         this.Game = game;
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (isFaceUp) {
-                    Card c = Card.this;
-                    Vector<Card> cards = new Vector<Card>();
-                    boolean alreadySelected = c.selected();
-                    if (Game.hasSelectedCards()) {
-                        if (Game.getCards().get(0) == c) {
-                            while (c != null) { c.deselect(); c = c.getChild(); }
-                            Game.deselectCards();
-                        } else if (Game.getCards().get(0).getSuit() == c.getSuit()
-                                && Game.getCards().get(0).getRank() == (c.getRank() - 1)) {
-                            if (!c.hasChild()) {
-                                Card cardToAdd = Game.getCards().get(0);
-                                Pile cPile = cardToAdd.getPile();
-                                cardToAdd.take();
-                                pile.addCard(cardToAdd);
-                                while (cardToAdd != null) { cardToAdd.deselect(); cardToAdd = cardToAdd.getChild(); }
-                                Game.deselectCards();
-                                if (!cPile.isEmpty() && !cPile.getBottomCard().faceUp()) cPile.getBottomCard().flip();
-                            }
-                        } else {
-                            for (int i = 0; i < Game.getCards().size(); i++) { Game.getCards().get(i).deselect(); }
-                            Game.deselectCards();
-                        }
-                    } else {
-                        if (alreadySelected) { while (c != null) { c.deselect(); c = c.getChild(); } Game.deselectCards(); }
-                        else if (c.isLegalStack()) { while (c != null) { c.select(); cards.add(c); c = c.getChild(); } Game.selectCards(cards); }
-                    }
-                    pile.recalculateSize();
-                    Game.isWinner();
-                }
-            }
-        });
+        // Change this to a seperate class
+        addMouseListener(new CardMouseListener());
+        // addMouseListener(new MouseAdapter() 
+        // {
+        //     @Override
+        //     public void mouseClicked(MouseEvent e) {
+        //         if (isFaceUp) {
+        //             Card c = Card.this;
+        //             Vector<Card> cards = new Vector<Card>();
+        //             boolean alreadySelected = c.selected();
+        //             if (Game.hasSelectedCards()) {
+        //                 if (Game.getCards().get(0) == c) {
+        //                     while (c != null) { c.deselect(); c = c.getChild(); }
+        //                     Game.deselectCards();
+        //                 } else if (Game.getCards().get(0).getSuit() == c.getSuit()
+        //                         && Game.getCards().get(0).getRank() == (c.getRank() - 1)) {
+        //                     if (!c.hasChild()) {
+        //                         Card cardToAdd = Game.getCards().get(0);
+        //                         Pile cPile = cardToAdd.getPile();
+        //                         cardToAdd.take();
+        //                         pile.addCard(cardToAdd);
+        //                         while (cardToAdd != null) { cardToAdd.deselect(); cardToAdd = cardToAdd.getChild(); }
+        //                         Game.deselectCards();
+        //                         if (!cPile.isEmpty() && !cPile.getBottomCard().faceUp()) cPile.getBottomCard().flip();
+        //                     }
+        //                 } else {
+        //                     for (int i = 0; i < Game.getCards().size(); i++) { Game.getCards().get(i).deselect(); }
+        //                     Game.deselectCards();
+        //                 }
+        //             } else {
+        //                 if (alreadySelected) { while (c != null) { c.deselect(); c = c.getChild(); } Game.deselectCards(); }
+        //                 else if (c.isLegalStack()) { while (c != null) { c.select(); cards.add(c); c = c.getChild(); } Game.selectCards(cards); }
+        //             }
+        //             pile.recalculateSize();
+        //             Game.isWinner();
+        //         }
+        //     }
+        // });
         
         // Load card images
         try {
@@ -72,11 +75,79 @@ public class Card extends JPanel {
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
             cardImage = ImageIO.read(getClass().getResourceAsStream("assets/yellow.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-        } catch (IOException e) { e.printStackTrace(); JOptionPane.showMessageDialog(null, "Error loading card images: " + e.getMessage()); }
+        } 
+        catch (IOException e) { 
+            JOptionPane.showMessageDialog(null, 
+            "Error loading card images: " + e.getMessage());
+        }
         setOpaque(false);
         setPreferredSize(new Dimension(115, 145));
     }
 
+    private class CardMouseListener extends MouseAdapter{
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (isFaceUp) {
+                Card c = Card.this;
+                Vector<Card> cards = new Vector<Card>();
+                boolean alreadySelected = c.selected();
+                if (Game.hasSelectedCards()) {
+                    if (Game.getCards().get(0) == c) {
+                        while (c != null) { 
+                            c.deselect(); 
+                            c = c.getChild();
+                        }
+                        Game.deselectCards();
+                    } 
+                    else if (Game.getCards().get(0).getSuit() 
+                            == c.getSuit()
+                            && Game.getCards().get(0).getRank() 
+                            == (c.getRank() - 1)) {
+                        if (!c.hasChild()) {
+                            Card cardToAdd = Game.getCards().get(0);
+                            Pile cPile = cardToAdd.getPile();
+                            cardToAdd.take();
+                            pile.addCard(cardToAdd);
+
+                            while (cardToAdd != null) { 
+                                cardToAdd.deselect(); 
+                                cardToAdd = cardToAdd.getChild(); 
+                            }
+
+                            Game.deselectCards();
+                            if (!cPile.isEmpty() && 
+                                !cPile.getBottomCard().faceUp()) 
+                                cPile.getBottomCard().flip();
+                        }
+                    } 
+                    else {
+                        for (int i = 0; i < Game.getCards().size(); i++)
+                            Game.getCards().get(i).deselect();
+                        Game.deselectCards();
+                    }
+                } 
+                else {
+                    if (alreadySelected) { 
+                        while (c != null) { 
+                            c.deselect(); 
+                            c = c.getChild(); 
+                        } 
+                        Game.deselectCards(); 
+                    }
+                    else if (c.isLegalStack()) { 
+                        while (c != null) { 
+                            c.select(); 
+                            cards.add(c); 
+                            c = c.getChild(); 
+                        }
+                        Game.selectCards(cards); 
+                    }
+                }
+                pile.recalculateSize();
+                Game.isWinner();
+            }
+        }
+    }
     public void flip() { isFaceUp = !isFaceUp; }
     public boolean faceUp() { return isFaceUp; }
     public int getRank() { return rank; }
