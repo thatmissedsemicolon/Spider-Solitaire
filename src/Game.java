@@ -5,15 +5,15 @@ It contains the main logic and functionality of the game.
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Vector;
 import java.net.URI;
+import java.util.Stack;
 
 class Game {
     Deck gameDeck;
     Pile gamePiles[];
     JFrame gameFrame;
     boolean isCardSelected = false;
-    Vector<Card> cards = null;
+    Stack<Card> cards = null;
     int difficultyLevel;
 
     // Constructor for the Game class
@@ -125,13 +125,14 @@ class Game {
     }
 
     // Select a group of cards
-    public void selectCards(Vector<Card> selectCards) {
+    public void selectCards(Stack<Card> selectCards) {
         this.isCardSelected = true;
-        this.cards = new Vector<>(selectCards);
+        this.cards = new Stack<Card>();
+        this.cards.addAll(selectCards);
     }
 
     // Get the selected cards
-    public Vector<Card> getCards() {
+    public Stack<Card> getCards() {
         return this.cards;
     }
 
