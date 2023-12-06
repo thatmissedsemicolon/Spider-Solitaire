@@ -47,16 +47,7 @@ public class Pile extends JPanel {
             card.setPile(this);
             layeredPane.add(card, Integer.valueOf(depth));
         }
-
-        // addMouseListener(new MouseAdapter() {
-        //     @Override
-        //     public void mouseClicked(MouseEvent e) {
-        //         handlePileClick();
-        //     }
-        // });
-
         addMouseListener(new PileMouseListener());
-
         recalculateSize();
     }
 
@@ -64,12 +55,12 @@ public class Pile extends JPanel {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (isEmpty() && game.hasSelectedCards()) {
-            Card cardToAdd = game.getCards().get(0);
-            cardToAdd.take();
-            addCard(cardToAdd); // Adding card to an empty space
-            deselectStack(cardToAdd);
-            game.deselectCards();
-        }
+                Card cardToAdd = game.getCards().get(0);
+                cardToAdd.take();
+                addCard(cardToAdd); // Adding card to an empty space
+                deselectStack(cardToAdd);
+                game.deselectCards();
+            }
         }
     }
 
@@ -79,17 +70,6 @@ public class Pile extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.layeredPane = new JLayeredPane();
         this.add(this.layeredPane);
-    }
-
-    // Handle the click on the pile
-    private void handlePileClick() {
-        if (this.isEmpty() && this.game.hasSelectedCards()) {
-            Card cardToAdd = this.game.getCards().get(0);
-            cardToAdd.take();
-            this.addCard(cardToAdd); // Adding card to an empty space
-            this.deselectStack(cardToAdd);
-            this.game.deselectCards();
-        }
     }
 
     // Check if the pile is empty
