@@ -239,10 +239,10 @@ public class Card extends JPanel {
     }
 
     // Paints the card component
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
         int x = isSelected ? 20 : 0;
-        g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
+        graphics.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 
     // Gets the pile to which the card belongs
