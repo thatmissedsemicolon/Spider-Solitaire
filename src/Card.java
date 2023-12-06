@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class Card extends JPanel {
-    enum Suit { Spades, Diamonds, Clubs, Hearts }
+    protected enum Suit { Spades, Diamonds, Clubs, Hearts }
 
     private int rank;
     private Suit suit;
@@ -127,7 +127,7 @@ public class Card extends JPanel {
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         int x = isSelected ? 20 : 0;
-        System.out.println("Rendering card at x: " + x); // Debugging statement
+        // System.out.println("Rendering card at x: " + x); // Debugging statement
         graphics.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 }
