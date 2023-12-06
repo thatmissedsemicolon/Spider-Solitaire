@@ -129,6 +129,7 @@ public class Pile extends JPanel {
                 getBottomCard().setChild(card);
             }
             card.setBounds(0, OFFSET * cards.size(), 115, 145);
+            System.out.println("Card bounds: " + card.getBounds()); // Debugging
             cards.add(card);
             layeredPane.add(card, Integer.valueOf(cards.size()));
             card = card.getChild();
@@ -136,6 +137,10 @@ public class Pile extends JPanel {
 
         this.checkAndResolveStack();
         this.recalculateSize();
+
+        // Added revalidate and repaint to ensure updates are reflected
+        this.revalidate();
+        this.repaint();
     }
 
     // Take a stack of cards from the pile
@@ -163,10 +168,15 @@ public class Pile extends JPanel {
             card = card.getChild();
         }
     }
-
+    
     // Recalculate the size of the pile
     public void recalculateSize() {
-        layeredPane.setPreferredSize(new Dimension(115, (OFFSET * (cards.size() + 1)) + (145 - OFFSET)));
+        int newHeight = (OFFSET * (cards.size() - 1)) + 145;
+        layeredPane.setPreferredSize(new Dimension(115, newHeight));
+        System.out.println("New pile size: " + layeredPane.getPreferredSize());
+        this.setPreferredSize(new Dimension(115, newHeight)); // Update Pile's preferred size as well
+
+        // Added revalidate and repaint here too
         this.revalidate();
         this.repaint();
     }

@@ -72,7 +72,7 @@ public class Card extends JPanel {
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
             cardImage = ImageIO.read(getClass().getResourceAsStream("assets/yellow.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) { e.printStackTrace(); JOptionPane.showMessageDialog(null, "Error loading card images: " + e.getMessage()); }
         setOpaque(false);
         setPreferredSize(new Dimension(115, 145));
     }
@@ -127,6 +127,7 @@ public class Card extends JPanel {
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         int x = isSelected ? 20 : 0;
+        System.out.println("Rendering card at x: " + x); // Debugging statement
         graphics.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 }

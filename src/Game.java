@@ -34,9 +34,31 @@ class Game {
         // Initialize the game deck and piles
         gameDeck = new Deck(difficultyLevel, this);
         gamePiles = new Pile[10];
+
+        Color backgroundColor = new Color(25, 160, 15);
+
+        // Get the screen size
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenHeight = screenSize.height;
+
         for (int i = 0; i < 10; i++) {
             gamePiles[i] = new Pile(gameDeck, i < 4 ? 6 : 5, this);
-            gameFrame.add(gamePiles[i], gbc);
+
+            JScrollPane pileScrollPane = new JScrollPane(gamePiles[i]);
+            pileScrollPane.setPreferredSize(new Dimension(120, screenHeight - 100)); // Set a preferred size for the scroll pane
+            pileScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            pileScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+            // Set the background color for the JScrollPane and its viewport
+            pileScrollPane.getViewport().setBackground(backgroundColor);
+            pileScrollPane.setBackground(backgroundColor);
+
+            // Remove the border of the JScrollPane
+            pileScrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+            // Add the JScrollPane to the game frame instead of the Pile directly
+            gameFrame.add(pileScrollPane, gbc);
+            // gameFrame.add(gamePiles[i], gbc);
         }
 
         // Create the menu bar and add menus
