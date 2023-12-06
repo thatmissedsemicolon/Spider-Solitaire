@@ -40,31 +40,31 @@ public class Card extends JPanel {
     }
 
     // Flips the card to change its face up or face down state
-    public void flip() { isFaceUp = !isFaceUp; }
+    public void flip() { this.isFaceUp = !this.isFaceUp; }
 
     // Checks if the card is face up
-    public boolean isFaceUp() { return isFaceUp; }
+    public boolean isFaceUp() { return this.isFaceUp; }
 
     // Gets the rank of the card
-    public int getRank() { return rank; }
+    public int getRank() { return this.rank; }
 
     // Gets the suit of the card
-    public Suit getSuit() { return suit; }
+    public Suit getSuit() { return this.suit; }
 
     // Sets the child card
-    public void setChild(Card c) { child = c; }
+    public void setChild(Card c) { this.child = c; }
 
     // Gets the child card
-    public Card getChild() { return child; }
+    public Card getChild() { return this.child; }
 
     // Takes the card from its current pile
     public void take() { getPile().takeStack(this); }
 
     // Checks if the card has a child card
-    public boolean hasChild() { return child != null; }
+    public boolean hasChild() { return this.child != null; }
 
     // Checks if the card is selected
-    public boolean isSelected() { return isSelected; }
+    public boolean isSelected() { return this.isSelected; }
 
     // Selects the card and updates its appearance
     public void select() {
