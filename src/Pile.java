@@ -3,14 +3,14 @@ The Pile class represents a pile of cards in the Solitaire game.
 It manages the cards in the pile and handles interactions with the pile.
 */
 
+import java.util.Vector;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Stack;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 
 public class Pile extends JPanel {
-    private Stack<Card> cards;
+    private Vector<Card> cards;
     private JLayeredPane layeredPane;
     private static final int OFFSET = 35;
     private Game game;
@@ -18,7 +18,7 @@ public class Pile extends JPanel {
     // Constructor for creating a pile with an initial card
     public Pile(Card initialCard, Game game) {
         this.game = game;
-        this.cards = new Stack<>();
+        this.cards = new Vector<Card>();
         this.configureLayout();
 
         if (initialCard != null) {
@@ -31,19 +31,19 @@ public class Pile extends JPanel {
     // Constructor for creating a pile from a deck
     public Pile(Deck deck, int numCards, Game game) {
         this.game = game;
-        this.cards = new Stack<>();
+        this.cards = new Vector<Card>();
         this.configureLayout();
 
         for (int depth = 0; depth < numCards; depth++) {
             Card card = deck.drawCard();
             if (depth > 0) {
-                cards.peek().setChild(card);
+                cards.get(depth - 1).setChild(card);
             }
             if (depth == numCards - 1) {
                 card.flip();
             }
             card.setBounds(0, OFFSET * depth, 115, 145);
-            cards.push(card);
+            cards.add(card);
             card.setPile(this);
             layeredPane.add(card, Integer.valueOf(depth));
         }
@@ -84,12 +84,12 @@ public class Pile extends JPanel {
 
     // Get the top card in the pile
     public Card getTopCard() {
-        return cards.isEmpty() ? null : cards.peek();
+        return cards.isEmpty() ? null : cards.firstElement();
     }
 
     // Get the bottom card in the pile
     public Card getBottomCard() {
-        return cards.isEmpty() ? null : cards.firstElement();
+        return cards.isEmpty() ? null : cards.lastElement();
     }
 
     // Check and resolve a stack if necessary
@@ -126,10 +126,10 @@ public class Pile extends JPanel {
         while (card != null) {
             card.setPile(this);
             if (!cards.isEmpty()) {
-                cards.peek().setChild(card);
+                getBottomCard().setChild(card);
             }
             card.setBounds(0, OFFSET * cards.size(), 115, 145);
-            cards.push(card);
+            cards.add(card);
             layeredPane.add(card, Integer.valueOf(cards.size()));
             card = card.getChild();
         }
@@ -140,22 +140,19 @@ public class Pile extends JPanel {
 
     // Take a stack of cards from the pile
     public void takeStack(Card card) {
-        Stack<Card> tempStack = new Stack<>();
-        while (!cards.isEmpty() && cards.peek() != card) {
-            tempStack.push(cards.pop());
-        }
+        int index = cards.indexOf(card);
+        if (index < 0) return;
 
-        if (!cards.isEmpty()) {
-            cards.pop(); // Pop the card we're taking
-        }
-
-        while (!tempStack.isEmpty()) {
-            Card tempCard = tempStack.pop();
-            tempCard.setChild(cards.peek()); // Set the child of the new top card
-            cards.push(tempCard);
+        Card newBottomCard = index > 0 ? cards.get(index - 1) : null;
+        if (newBottomCard != null) {
+            newBottomCard.setChild(null);
+            if (!newBottomCard.isFaceUp()) {
+                newBottomCard.flip();
+            }
         }
 
         this.removeCardsFromLayer(card);
+        cards.subList(index, cards.size()).clear();
         this.recalculateSize();
     }
 

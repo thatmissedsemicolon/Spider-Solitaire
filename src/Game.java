@@ -5,7 +5,7 @@ It contains the main logic and functionality of the game.
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Stack;
+import java.util.Vector;
 import java.net.URI;
 
 class Game {
@@ -13,7 +13,7 @@ class Game {
     Pile gamePiles[];
     JFrame gameFrame;
     boolean isCardSelected = false;
-    Stack<Card> cards = null;
+    Vector<Card> cards = null;
     int difficultyLevel;
 
     // Constructor for the Game class
@@ -110,7 +110,6 @@ class Game {
                     c.flip();
                     pile.addCard(c);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Unable to deal cards: The deck is empty!");
                     break;
                 }
             }
@@ -125,14 +124,13 @@ class Game {
     }
 
     // Select a group of cards
-    public void selectCards(Stack<Card> selectCards) {
+    public void selectCards(Vector<Card> selectCards) {
         this.isCardSelected = true;
-        this.cards = new Stack<Card>();
-        this.cards.addAll(selectCards);
+        this.cards = new Vector<>(selectCards);
     }
 
     // Get the selected cards
-    public Stack<Card> getCards() {
+    public Vector<Card> getCards() {
         return this.cards;
     }
 
@@ -146,11 +144,9 @@ class Game {
     public void isWinner() {
         if (this.gameDeck.isEmpty()) {
             for (Pile pile : gamePiles) {
-                if (!pile.isEmpty())
-                    return;
+                if (!pile.isEmpty()) return;
             }
-            int playAgain = JOptionPane.showConfirmDialog(null, "You won!\nPlay again?", "You won!",
-                    JOptionPane.YES_NO_OPTION);
+            int playAgain = JOptionPane.showConfirmDialog(null, "You won!\nPlay again?", "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
                 new Game(difficultyLevel);
@@ -210,12 +206,13 @@ class Game {
 
     // Show difficulty selection dialog and start a new game
     private static void showDifficultySelection() {
-        String[] options = { "Beginner", "Intermediate", "Advanced" };
+        String[] options = {"Beginner", "Intermediate", "Advanced"};
 
         int difficulty = JOptionPane.showOptionDialog(
-                null, "Select Difficulty:", "Difficulty Selection",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, options[0]);
+            null, "Select Difficulty:", "Difficulty Selection",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+            null, options, options[0]
+        );
 
         int difficultyLevel;
         switch (difficulty) {

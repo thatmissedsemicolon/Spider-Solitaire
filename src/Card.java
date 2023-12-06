@@ -6,17 +6,15 @@ It handles card interactions and rendering.
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Stack;
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.Vector;
 
 public class Card extends JPanel {
     private static final int CARD_WIDTH = 95;
     private static final int CARD_HEIGHT = 145;
 
-    enum Suit {
-        Spades, Diamonds, Clubs, Hearts
-    }
+    enum Suit { Spades, Diamonds, Clubs, Hearts }
 
     private int rank;
     private Suit suit;
@@ -26,7 +24,6 @@ public class Card extends JPanel {
     private Game game;
     private Pile pile = null;
 
-    // Constructor for creating a Card object
     public Card(Suit suit, int rank, Game game) {
         this.suit = suit;
         this.rank = rank;
@@ -41,64 +38,26 @@ public class Card extends JPanel {
         this.setPreferredSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
     }
 
-    // Flips the card to change its face up or face down state
-    public void flip() {
-        this.isFaceUp = !this.isFaceUp;
-    }
+    public void flip() { isFaceUp = !isFaceUp; }
+    public boolean isFaceUp() { return isFaceUp; }
+    public int getRank() { return rank; }
+    public Suit getSuit() { return suit; }
+    public void setChild(Card c) { child = c; }
+    public Card getChild() { return child; }
+    public void take() { getPile().takeStack(this); }
+    public boolean hasChild() { return child != null; }
+    public boolean isSelected() { return isSelected; }
 
-    // Checks if the card is face up
-    public boolean isFaceUp() {
-        return this.isFaceUp;
-    }
-
-    // Gets the rank of the card
-    public int getRank() {
-        return this.rank;
-    }
-
-    // Gets the suit of the card
-    public Suit getSuit() {
-        return this.suit;
-    }
-
-    // Sets the child card
-    public void setChild(Card c) {
-        this.child = c;
-    }
-
-    // Gets the child card
-    public Card getChild() {
-        return this.child;
-    }
-
-    // Takes the card from its current pile
-    public void take() {
-        getPile().takeStack(this);
-    }
-
-    // Checks if the card has a child card
-    public boolean hasChild() {
-        return this.child != null;
-    }
-
-    // Checks if the card is selected
-    public boolean isSelected() {
-        return this.isSelected;
-    }
-
-    // Selects the card and updates its appearance
     public void select() {
         this.isSelected = true;
         this.repaint();
     }
 
-    // Deselects the card and updates its appearance
     public void deselect() {
         this.isSelected = false;
         this.repaint();
     }
 
-    // Checks if the card is part of a legal stack
     public boolean isLegalStack() {
         Card c = this;
         Card next = this.getChild();
@@ -113,7 +72,6 @@ public class Card extends JPanel {
         return true;
     }
 
-    // Initializes card images
     private void initializeImages() {
         try {
             frontImage = loadImage(getImagePath());
@@ -124,18 +82,15 @@ public class Card extends JPanel {
         this.setOpaque(false);
     }
 
-    // Loads an image from the specified path
     private Image loadImage(String imagePath) throws IOException {
         return ImageIO.read(getClass().getResourceAsStream(imagePath))
-                .getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+            .getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
     }
 
-    // Handles errors during image loading
     private void handleImageLoadingError(IOException e) {
         e.printStackTrace();
     }
 
-    // Mouse listener for card interaction
     private class CardMouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -144,7 +99,7 @@ public class Card extends JPanel {
             }
 
             Card clickedCard = Card.this;
-            Stack<Card> selectedCards = new Stack<>();
+            Vector<Card> selectedCards = new Vector<>();
 
             if (isSelected) {
                 deselectCardChain(clickedCard);
@@ -160,8 +115,7 @@ public class Card extends JPanel {
             game.isWinner();
         }
 
-        // Handles selected cards when a card is clicked
-        private void handleSelectedCards(Card clickedCard, Stack<Card> selectedCards) {
+        private void handleSelectedCards(Card clickedCard, Vector<Card> selectedCards) {
             Card firstSelectedCard = game.getCards().get(0);
 
             if (firstSelectedCard == clickedCard) {
@@ -175,14 +129,12 @@ public class Card extends JPanel {
             }
         }
 
-        // Handles a valid card stack when moving cards
         private void handleValidCardStack(Card firstSelectedCard) {
             if (!Card.this.hasChild()) {
                 moveSelectedCardsToPile(firstSelectedCard);
             }
         }
 
-        // Moves selected cards to the target pile
         private void moveSelectedCardsToPile(Card firstSelectedCard) {
             Card cardToAdd = firstSelectedCard;
             Pile cPile = cardToAdd.getPile();
@@ -194,7 +146,6 @@ public class Card extends JPanel {
             }
         }
 
-        // Deselects all selected cards
         private void deselectAllSelectedCards() {
             for (int i = 0; i < game.getCards().size(); i++) {
                 game.getCards().get(i).deselect();
@@ -202,8 +153,7 @@ public class Card extends JPanel {
             game.deselectCards();
         }
 
-        // Selects a chain of cards starting from the clicked card
-        private void selectCardChain(Card clickedCard, Stack<Card> selectedCards) {
+        private void selectCardChain(Card clickedCard, Vector<Card> selectedCards) {
             Card currentCard = clickedCard;
             while (currentCard != null) {
                 currentCard.select();
@@ -212,7 +162,6 @@ public class Card extends JPanel {
             }
         }
 
-        // Deselects a chain of cards starting from the clicked card
         private void deselectCardChain(Card clickedCard) {
             Card currentCard = clickedCard;
             while (currentCard != null) {
@@ -222,7 +171,6 @@ public class Card extends JPanel {
         }
     }
 
-    // Constructs the image path for the card based on its rank and suit
     private String getImagePath() {
         StringBuilder imgPath = new StringBuilder("assets/");
         imgPath.append(getRank());
@@ -231,7 +179,6 @@ public class Card extends JPanel {
         return imgPath.toString();
     }
 
-    // Returns a string representation of the card
     public String toString() {
         StringBuilder result = new StringBuilder();
         switch (getRank()) {
@@ -258,20 +205,12 @@ public class Card extends JPanel {
         return result.toString();
     }
 
-    // Paints the card component
-    protected void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         int x = isSelected ? 20 : 0;
-        graphics.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
+        g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 
-    // Gets the pile to which the card belongs
-    Pile getPile() {
-        return pile;
-    }
-
-    // Sets the pile to which the card belongs
-    void setPile(Pile newPile) {
-        pile = newPile;
-    }
+    Pile getPile() { return pile; }
+    void setPile(Pile newPile) { pile = newPile; }
 }
