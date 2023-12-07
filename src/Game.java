@@ -71,19 +71,15 @@ class Game {
         rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
         exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
 
-        // Button actions
+        // Button action listener
         playButton.addActionListener(e -> {
             gameFrame.dispose();
             gameFrame.dispose();
             showDifficultySelection();
         });
         rulesButton.addActionListener(e -> displayRules(gameFrame));
-        rulesButton.addActionListener(e -> displayRules(gameFrame));
         exitButton.addActionListener(e -> System.exit(0));
 
-        gameFrame.add(playButton, gbc);
-        gameFrame.add(rulesButton, gbc);
-        gameFrame.add(exitButton, gbc);
         gameFrame.add(playButton, gbc);
         gameFrame.add(rulesButton, gbc);
         gameFrame.add(exitButton, gbc);
@@ -250,13 +246,13 @@ class Game {
 
     // Check if there are selected cards
     public boolean hasSelectedCards() {
-        return this.isCardSelected;
+        return isCardSelected;
     }
 
     // Select a group of cards
     public void selectCards(Vector<Card> selectCards) {
-        this.isCardSelected = true;
-        this.cards = new Vector<>(selectCards);
+        isCardSelected = true;
+        cards = new Vector<>(selectCards);
     }
 
     // Get the selected cards

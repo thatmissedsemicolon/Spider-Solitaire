@@ -54,10 +54,10 @@ public class Pile extends JPanel {
 
     // Configure the layout and layered pane
     private void configureLayout() {
-        this.setOpaque(false);
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        this.layeredPane = new JLayeredPane();
-        this.add(this.layeredPane);
+        setOpaque(false);
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        layeredPane = new JLayeredPane();
+        add(layeredPane);
     }
 
     // Check if the pile is empty
@@ -154,11 +154,11 @@ public class Pile extends JPanel {
     public void recalculateSize() {
         int newHeight = (OFFSET * (cards.size() - 1)) + 145;
         layeredPane.setPreferredSize(new Dimension(115, newHeight));
-        this.setPreferredSize(new Dimension(115, newHeight)); // Update Pile's preferred size as well
+        setPreferredSize(new Dimension(115, newHeight)); // Update Pile's preferred size as well
 
         // Added revalidate and repaint here too
-        this.revalidate();
-        this.repaint();
+        revalidate();
+        repaint();
     }
 
     // Deselect a stack of cards
