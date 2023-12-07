@@ -22,9 +22,7 @@ class Game {
     private Deck gameDeck;
     private Pile gamePiles[];
     private static JFrame gameFrame;
-    private static JFrame gameFrame;
     private JMenu gameStats;
-    private static JButton playButton, rulesButton, exitButton;
     private static JButton playButton, rulesButton, exitButton;
     private boolean isCardSelected = false;
     private Vector<Card> cards = null;
@@ -280,7 +278,6 @@ class Game {
                     return;
             int playAgain = JOptionPane.showConfirmDialog(null,
                     "You won!\nTotal Moves: " + numMoves + "\nPlay again?",
-                    "You won!\nTotal Moves: " + numMoves + "\nPlay again?",
                       "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
@@ -306,41 +303,29 @@ class Game {
     // Show suit selection dialog and start a new game
     private static void showDifficultySelection() {
         String[] options = {"1 Suit", "2 Suit", "4 Suit"};
-        String[] options = {"1 Suit", "2 Suit", "4 Suit"};
 
-        int numSuits = JOptionPane.showOptionDialog(
-            null, "Select Number of Suits:", "Suit Selection",
         int numSuits = JOptionPane.showOptionDialog(
             null, "Select Number of Suits:", "Suit Selection",
             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
             new ImageIcon("assets/iconn.png"), options, options[0]);
-            new ImageIcon("assets/iconn.png"), options, options[0]);
 
-        int suit;
-        switch (numSuits) {
         int suit;
         switch (numSuits) {
             case 0:
                 suit = 1;
-                suit = 1;
                 break;
             case 1:
                 suit = 2;
-                suit = 2;
                 break;
             case 2:
-                suit = 4;
                 suit = 4;
                 break;
             default:
                 suit = 0;
                 System.exit(0);
-                suit = 0;
-                System.exit(0);
                 break;
         }
 
-        SwingUtilities.invokeLater(() -> new Game(suit));
         SwingUtilities.invokeLater(() -> new Game(suit));
     }
 }
