@@ -13,22 +13,22 @@ import java.util.Vector;
 public class Card extends JPanel {
     protected enum Suit { Spades, Diamonds, Clubs, Hearts }
 
-    private int rank;
+    private int value;
     private Suit suit;
     private boolean isFaceUp, isSelected;
     private Image frontImage, backImage;
     private Card child;
-    private Game Game;
+    private Game game;
     private Pile pile = null;
 
     // Constructor for Card class
     public Card(Suit suit, int rank, Game game) {
         this.suit = suit;
-        this.rank = rank;
-        this.isFaceUp = false;
-        this.isSelected = false;
-        this.child = null;
-        this.Game = game;
+        value = rank;
+        isFaceUp = false;
+        isSelected = false;
+        child = null;
+        this.game = game;
 
         // Change this to a seperate class
         addMouseListener(new CardMouseListener());
@@ -55,20 +55,20 @@ public class Card extends JPanel {
                 Card c = Card.this;
                 Vector<Card> cards = new Vector<Card>();
                 boolean alreadySelected = c.selected();
-                if (Game.hasSelectedCards()) {
-                    if (Game.getCards().get(0) == c) {
+                if (game.hasSelectedCards()) {
+                    if (game.getCards().get(0) == c) {
                         while (c != null) { 
                             c.deselect(); 
                             c = c.getChild();
                         }
-                        Game.deselectCards();
+                        game.deselectCards();
                     } 
-                    else if (Game.getCards().get(0).getSuit() 
+                    else if (game.getCards().get(0).getSuit() 
                             == c.getSuit()
-                            && Game.getCards().get(0).getRank() 
-                            == (c.getRank() - 1)) {
+                            && game.getCards().get(0).getValue() 
+                            == (c.getValue() - 1)) {
                         if (!c.hasChild()) {
-                            Card cardToAdd = Game.getCards().get(0);
+                            Card cardToAdd = game.getCards().get(0);
                             Pile cPile = cardToAdd.getPile();
                             cardToAdd.take();
                             pile.addCard(cardToAdd);
@@ -78,16 +78,16 @@ public class Card extends JPanel {
                                 cardToAdd = cardToAdd.getChild(); 
                             }
 
-                            Game.deselectCards();
+                            game.deselectCards();
                             if (!cPile.isEmpty() && 
                                 !cPile.getBottomCard().faceUp()) 
                                 cPile.getBottomCard().flip();
                         }
                     } 
                     else {
-                        for (int i = 0; i < Game.getCards().size(); i++)
-                            Game.getCards().get(i).deselect();
-                        Game.deselectCards();
+                        for (int i = 0; i < game.getCards().size(); i++)
+                            game.getCards().get(i).deselect();
+                        game.deselectCards();
                     }
                 } 
                 else {
@@ -96,7 +96,7 @@ public class Card extends JPanel {
                             c.deselect(); 
                             c = c.getChild(); 
                         } 
-                        Game.deselectCards(); 
+                        game.deselectCards(); 
                     }
                     else if (c.isLegalStack()) { 
                         while (c != null) { 
@@ -104,62 +104,67 @@ public class Card extends JPanel {
                             cards.add(c); 
                             c = c.getChild(); 
                         }
-                        Game.selectCards(cards); 
+                        game.selectCards(cards); 
                     }
                 }
                 pile.recalculateSize();
-                Game.isWinner();
+                game.isWinner();
             }
         }
     }
+
+    // Setters
     public void flip() { 
         isFaceUp = !isFaceUp; 
-    }
-
-    public boolean faceUp() { 
-        return isFaceUp; 
-    }
-
-    public int getRank() { 
-        return rank; 
-    }
-
-    public Suit getSuit() { 
-        return suit; 
     }
 
     public void setChild(Card c) { 
         child = c; 
     }
 
-    public Card getChild() { 
-        return child; 
+    void setPile(Pile newPile) { 
+        pile = newPile; 
     }
 
     public void take() { 
         getPile().takeStack(this); 
     }
 
-    public boolean hasChild() { 
-        return child != null; 
-    }
-
     public void select() { 
-        isSelected = true; repaint(); 
+        isSelected = true; 
+        repaint(); 
     }
 
     public void deselect() { 
-        isSelected = false; repaint(); 
+        isSelected = false; 
+        repaint(); 
+    }
+
+    // Getters
+    public boolean faceUp() { 
+        return isFaceUp; 
+    }
+
+    public int getValue() { 
+        return value; 
+    }
+
+    public Suit getSuit() { 
+        return suit; 
+    }
+
+    public Card getChild() { 
+        return child; 
+    }
+
+    public boolean hasChild() { 
+        return child != null; 
     }
 
     public boolean selected() { 
         return isSelected; 
     }
 
-    void setPile(Pile newPile) { 
-        pile = newPile; 
-    }
-    
     Pile getPile() { 
         return pile; 
     }
@@ -170,7 +175,7 @@ public class Card extends JPanel {
         while (next != null) {
             if (c.getSuit() != next.getSuit()) 
                 return false;
-            else if (c.getRank() != next.getRank() + 1) 
+            else if (c.getValue() != next.getValue() + 1) 
                 return false;
             c = next;
             next = next.getChild();
@@ -180,7 +185,7 @@ public class Card extends JPanel {
 
     // Get the image file path for the card
     private String getImagePath() {
-        return "assets/" + getRank() + getSuit().name().charAt(0) + ".png";
+        return "assets/" + getValue() + getSuit().name().charAt(0) + ".png";
     }
 
     // Paint the card component

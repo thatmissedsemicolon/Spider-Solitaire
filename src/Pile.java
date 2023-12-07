@@ -92,14 +92,14 @@ public class Pile extends JPanel {
         Card cardToCheck = this.findFirstFaceUpKing();
         if (cardToCheck != null && cardToCheck.isLegalStack()) {
             Card lastCard = this.findLastCardInStack(cardToCheck);
-            if (lastCard.getRank() == 1)
+            if (lastCard.getValue() == 1)
                 this.takeStack(cardToCheck);
         }
     }
 
     private Card findFirstFaceUpKing() {
         for (int i = 0; i < cards.size(); i++)
-            if (cards.get(i).getRank() == 13 && cards.get(i).faceUp())
+            if (cards.get(i).getValue() == 13 && cards.get(i).faceUp())
                 return cards.get(i); // Found a face-up King card
         return null; // No face-up King card found
     }    
