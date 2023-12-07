@@ -75,7 +75,7 @@ public class Pile extends JPanel {
     }
 
     // Check and resolve a stack if necessary
-    public void checkAndResolveStack() {
+    public void checkForStack() {
         Card cardToCheck = this.findLastFaceUpKing();
 
         if (cardToCheck != null && cardToCheck.isLegalStack()) {
@@ -115,12 +115,12 @@ public class Pile extends JPanel {
             card = card.getChild();
         }
 
-        this.checkAndResolveStack();
-        this.recalculateSize();
+        checkForStack();
+        recalculateSize();
 
         // Ensures updates are reflected in GUI
-        this.revalidate();
-        this.repaint();
+        revalidate();
+        repaint();
     }
 
     // Take a stack of cards from the pile
@@ -136,9 +136,9 @@ public class Pile extends JPanel {
                 newBottomCard.flip();
         }
 
-        this.removeCardsFromLayer(card);
+        removeCardsFromLayer(card);
         cards.subList(index, cards.size()).clear();
-        this.recalculateSize();
+        recalculateSize();
     }
 
     // Remove cards from the layered pane
@@ -155,7 +155,7 @@ public class Pile extends JPanel {
         layeredPane.setPreferredSize(new Dimension(115, newHeight));
         setPreferredSize(new Dimension(115, newHeight)); // Update Pile's preferred size as well
 
-        // Added revalidate and repaint here too
+        // Ensures updates are reflected in GUI
         revalidate();
         repaint();
     }
