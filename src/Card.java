@@ -44,7 +44,7 @@ public class Card extends JPanel {
             "Error loading card images: " + e.getMessage());
         }
         setOpaque(false);
-        setPreferredSize(new Dimension(115, 145));
+        setPreferredSize(new Dimension(115, 200));
     }
 
     private class CardMouseListener extends MouseAdapter{
@@ -93,18 +93,18 @@ public class Card extends JPanel {
                 else {
                     if (alreadySelected) { 
                         while (c != null) { 
-                            c.deselect(); 
-                            c = c.getChild(); 
+                            c.deselect();
+                            c = c.getChild();
                         } 
-                        game.deselectCards(); 
+                        game.deselectCards();
                     }
                     else if (c.isLegalStack()) { 
                         while (c != null) { 
-                            c.select(); 
-                            cards.add(c); 
-                            c = c.getChild(); 
+                            c.select();
+                            cards.add(c);
+                            c = c.getChild();
                         }
-                        game.selectCards(cards); 
+                        game.selectCards(cards);
                     }
                 }
                 pile.recalculateSize();
@@ -188,27 +188,15 @@ public class Card extends JPanel {
         return "assets/"+getValue()+getSuit().name().charAt(0)+".png";
     }
 
-    // Paint the card component
-    // protected void paintComponent(Graphics g) {
-    //     super.paintComponent(g);
-    //     int x = isSelected ? 20 : 0;
-    //     g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
-
-    // }
-
-    // protected void paintComponent(Graphics g){
-    //     super.paintComponent(g);
-    //     if(isFaceUp && isSelected)
-    //         setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-    //     else
-    //         setBorder(BorderFactory.createEmptyBorder());
-    //     g.drawImage(isFaceUp ? frontImage : backImage, 
-    //                 isSelected ? 20 : 0, 0, this);
-    // }
-
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int y = isSelected ? 20 : 0;
-        g.drawImage(isFaceUp ? frontImage : backImage, 0, y, this);
+        int y = 0;
+        if (isSelected) 
+            y = 18;
+
+        if(isFaceUp) 
+            g.drawImage(frontImage, 0, y, this);
+        else
+            g.drawImage(backImage, 0, y, this);
     }
 }
