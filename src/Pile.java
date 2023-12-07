@@ -116,6 +116,7 @@ public class Pile extends JPanel {
             card = card.getChild();
         }
 
+        
         this.checkAndResolveStack();
         this.recalculateSize();
 
