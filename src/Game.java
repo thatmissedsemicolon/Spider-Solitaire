@@ -64,6 +64,7 @@ class Game {
             gameFrame.add(pileScrollPane, gbc);
         }
 
+        
         // Create the menu bar and add menus
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");
