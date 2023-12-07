@@ -189,9 +189,26 @@ public class Card extends JPanel {
     }
 
     // Paint the card component
-    protected void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        int x = isSelected ? 20 : 0;
-        graphics.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
+    // protected void paintComponent(Graphics g) {
+    //     super.paintComponent(g);
+    //     int x = isSelected ? 20 : 0;
+    //     g.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
+
+    // }
+
+    // protected void paintComponent(Graphics g){
+    //     super.paintComponent(g);
+    //     if(isFaceUp && isSelected)
+    //         setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+    //     else
+    //         setBorder(BorderFactory.createEmptyBorder());
+    //     g.drawImage(isFaceUp ? frontImage : backImage, 
+    //                 isSelected ? 20 : 0, 0, this);
+    // }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int y = isSelected ? 20 : 0;
+        g.drawImage(isFaceUp ? frontImage : backImage, 0, y, this);
     }
 }

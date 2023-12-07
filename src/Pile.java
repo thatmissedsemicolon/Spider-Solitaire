@@ -23,12 +23,10 @@ public class Pile extends JPanel {
 
         for (int depth = 0; depth < numCards; depth++) {
             Card card = deck.drawCard();
-            if (depth > 0) {
+            if (depth > 0)
                 cards.get(depth - 1).setChild(card);
-            }
-            if (depth == numCards - 1) {
+            if (depth == numCards - 1)
                 card.flip();
-            }
             card.setBounds(0, OFFSET * depth, 115, 145);
             cards.add(card);
             card.setPile(this);
