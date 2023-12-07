@@ -244,8 +244,8 @@ class Game {
                 if (!gamePiles[i].isEmpty()) 
                     return;
             int playAgain = JOptionPane.showConfirmDialog(null,
-                                "You won!\nPlay again?",
-                                  "You won!", JOptionPane.YES_NO_OPTION);
+                    "You won!\nMoves: " + numMoves + "\nPlay again?",
+                      "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
                 new Game(difficultyLevel);
