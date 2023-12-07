@@ -6,15 +6,15 @@ It contains the main logic and functionality of the game.
 
 
 // ------------------- Fix This ------------------- //
-// Change back of card image
-// Remove the anonymous classes and change them private inner classes in the Game.java file
 // Change hard coded values
 // Change function names
 // Possibly add new functions to call other functions
-// Fix loops in Deck file line 54 - 61
+// Change card movement so when it is clicked the card moves down instead of sideways
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 import java.net.URI;
 
@@ -42,23 +42,12 @@ class Game {
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         gameFrame.setIconImage(icon.getImage());
         gameFrame.setLayout(new GridBagLayout());
-        gameFrame = new JFrame("Spider Solitaire");
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        gameFrame.setIconImage(icon.getImage());
-        gameFrame.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        playButton = new JButton("Play");
-        rulesButton = new JButton("Rules");
-        exitButton = new JButton("Exit");
-
-        playButton.setBackground(BGCOLOR);
-        rulesButton.setBackground(Color.RED);
-        exitButton.setBackground(Color.YELLOW);
         playButton = new JButton("Play");
         rulesButton = new JButton("Rules");
         exitButton = new JButton("Exit");
@@ -72,13 +61,9 @@ class Game {
         exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
 
         // Button action listener
-        playButton.addActionListener(e -> {
-            gameFrame.dispose();
-            gameFrame.dispose();
-            showDifficultySelection();
-        });
-        rulesButton.addActionListener(e -> displayRules(gameFrame));
-        exitButton.addActionListener(e -> System.exit(0));
+        playButton.addActionListener(new playButtonListener());
+        rulesButton.addActionListener(new rulesButtonListener());
+        exitButton.addActionListener(new exitButtonListener());
 
         gameFrame.add(playButton, gbc);
         gameFrame.add(rulesButton, gbc);
@@ -94,13 +79,12 @@ class Game {
 
         // Create the main game window
         gameFrame = new JFrame("Spider Solitaire");
-        gameFrame = new JFrame("Spider Solitaire");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         gameFrame.getContentPane().setBackground(BGCOLOR);
         gameFrame.setIconImage(icon.getImage());
-        gameFrame.setIconImage(icon.getImage());
         gameFrame.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.weightx = .8;
@@ -141,13 +125,13 @@ class Game {
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem rulesItem = new JMenuItem("Rules");
-        rulesItem.addActionListener(e -> displayRules(gameFrame));
+        rulesItem.addActionListener(new rulesButtonListener());
         helpMenu.add(rulesItem);
         menuBar.add(helpMenu);
 
         JMenu exitMenu = new JMenu("Quit");
         JMenuItem exitMenuItem = new JMenuItem("Quit Game!");
-        exitMenuItem.addActionListener(e -> System.exit(0));
+        exitMenuItem.addActionListener(new exitButtonListener());
         exitMenu.add(exitMenuItem);
         menuBar.add(exitMenu);
 
@@ -162,12 +146,37 @@ class Game {
         gameFrame.setVisible(true);
     }
 
+    private static class playButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            gameFrame.dispose();
+            showSuitSelection();
+        }
+    }
+
+    private static class rulesButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            displayRules(gameFrame);
+        }
+    }
+
+    private static class exitButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+        }
+    }
+
     // Create the "Deal" menu item
     private JMenuItem createDealMenu() {
         JMenuItem dealMenu = new JMenuItem("Deal");
         dealMenu.setMnemonic('d');
-        dealMenu.addActionListener(e -> dealNewCards());
+        dealMenu.addActionListener(new dealButtonListener());
         return dealMenu;
+    }
+
+    private class dealButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            dealNewCards();
+        }
     }
 
     // Create the "Restart" menu with difficulty options
@@ -183,11 +192,15 @@ class Game {
     // Create a menu item for starting a new game with a specific difficulty
     private JMenuItem createNewGame(String title, int numSuits) {
         JMenuItem newGameItem = new JMenuItem(title);
-        newGameItem.addActionListener(e -> {
+        newGameItem.addActionListener(new newGameButtonListener());
+        return newGameItem;
+    }
+
+    private class newGameButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
             gameFrame.dispose();
             new Game(numSuits);
-        });
-        return newGameItem;
+        }
     }
 
     // Update game stats text
@@ -239,9 +252,8 @@ class Game {
                 updateNumMoves();
             }
         } 
-        else {
-            JOptionPane.showMessageDialog(null, "Please Fill All Empty Spaces.");
-        }
+        else
+           JOptionPane.showMessageDialog(null,"Please Fill All Empty Spaces.");
     }
 
     // Check if there are selected cards
@@ -279,9 +291,8 @@ class Game {
                 gameFrame.dispose();
                 new Game(numSuits);
             } 
-            else {
+            else
                 System.exit(0);
-            }
         }
     }
 
@@ -297,7 +308,7 @@ class Game {
 
     // Show suit selection dialog and start a new game
     // Show suit selection dialog and start a new game
-    private static void showDifficultySelection() {
+    private static void showSuitSelection() {
         String[] options = {"1 Suit", "2 Suit", "4 Suit"};
 
         int numSuits = JOptionPane.showOptionDialog(
