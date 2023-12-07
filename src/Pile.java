@@ -127,7 +127,7 @@ public class Pile extends JPanel {
     // Take a stack of cards from the pile
     public void removeStack(Card card) {
         int index = cards.indexOf(card);
-        if (index < 0) 
+        if (index < 0)
             return;
 
         Card newBottomCard = index > 0 ? cards.get(index - 1) : null;
