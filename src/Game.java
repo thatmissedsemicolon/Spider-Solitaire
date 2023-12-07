@@ -4,7 +4,6 @@ The Game class represents a game of Spider Solitaire.
 It contains the main logic and functionality of the game.
 */
 
-
 // ------------------- Fix This ------------------- //
 // Change hard coded values
 // Change function names

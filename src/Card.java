@@ -171,21 +171,21 @@ public class Card extends JPanel {
 
     // Check if the card and its children form a legal stack
     public boolean isLegalStack() {
-        Card c = this, next = this.getChild();
-        while (next != null) {
-            if (c.getSuit() != next.getSuit()) 
+        Card c = this, kid = this.getChild();
+        while (kid != null) {
+            if (c.getSuit() != kid.getSuit()) 
                 return false;
-            else if (c.getValue() != next.getValue() + 1) 
+            else if (c.getValue() != kid.getValue() + 1) 
                 return false;
-            c = next;
-            next = next.getChild();
+            // c = kid;
+            kid = kid.getChild();
         }
         return true;
     }
 
     // Get the image file path for the card
     private String getImagePath() {
-        return "assets/" + getValue() + getSuit().name().charAt(0) + ".png";
+        return "assets/"+getValue()+getSuit().name().charAt(0)+".png";
     }
 
     // Paint the card component
