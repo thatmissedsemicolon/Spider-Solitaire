@@ -28,7 +28,7 @@ public class Pile extends JPanel {
         this.recalculateSize();
     }
 
-    // Constructor for creating a pile from a deck
+    // Constructor for creating a pile from the deck
     public Pile(Deck deck, int numCards, Game game) {
         this.game = game;
         this.cards = new Vector<Card>();
@@ -118,7 +118,6 @@ public class Pile extends JPanel {
             if (!cards.isEmpty())
                 getBottomCard().setChild(card);
             card.setBounds(0, OFFSET * cards.size(), 115, 145);
-            // System.out.println("Card bounds: " + card.getBounds()); // Debugging
             cards.add(card);
             layeredPane.add(card, Integer.valueOf(cards.size()));
             card = card.getChild();
@@ -162,7 +161,6 @@ public class Pile extends JPanel {
     public void recalculateSize() {
         int newHeight = (OFFSET * (cards.size() - 1)) + 145;
         layeredPane.setPreferredSize(new Dimension(115, newHeight));
-        // System.out.println("New pile size: " + layeredPane.getPreferredSize());
         this.setPreferredSize(new Dimension(115, newHeight)); // Update Pile's preferred size as well
 
         // Added revalidate and repaint here too

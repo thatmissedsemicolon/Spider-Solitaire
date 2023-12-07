@@ -32,42 +32,6 @@ public class Card extends JPanel {
 
         // Change this to a seperate class
         addMouseListener(new CardMouseListener());
-        // addMouseListener(new MouseAdapter() 
-        // {
-        //     @Override
-        //     public void mouseClicked(MouseEvent e) {
-        //         if (isFaceUp) {
-        //             Card c = Card.this;
-        //             Vector<Card> cards = new Vector<Card>();
-        //             boolean alreadySelected = c.selected();
-        //             if (Game.hasSelectedCards()) {
-        //                 if (Game.getCards().get(0) == c) {
-        //                     while (c != null) { c.deselect(); c = c.getChild(); }
-        //                     Game.deselectCards();
-        //                 } else if (Game.getCards().get(0).getSuit() == c.getSuit()
-        //                         && Game.getCards().get(0).getRank() == (c.getRank() - 1)) {
-        //                     if (!c.hasChild()) {
-        //                         Card cardToAdd = Game.getCards().get(0);
-        //                         Pile cPile = cardToAdd.getPile();
-        //                         cardToAdd.take();
-        //                         pile.addCard(cardToAdd);
-        //                         while (cardToAdd != null) { cardToAdd.deselect(); cardToAdd = cardToAdd.getChild(); }
-        //                         Game.deselectCards();
-        //                         if (!cPile.isEmpty() && !cPile.getBottomCard().faceUp()) cPile.getBottomCard().flip();
-        //                     }
-        //                 } else {
-        //                     for (int i = 0; i < Game.getCards().size(); i++) { Game.getCards().get(i).deselect(); }
-        //                     Game.deselectCards();
-        //                 }
-        //             } else {
-        //                 if (alreadySelected) { while (c != null) { c.deselect(); c = c.getChild(); } Game.deselectCards(); }
-        //                 else if (c.isLegalStack()) { while (c != null) { c.select(); cards.add(c); c = c.getChild(); } Game.selectCards(cards); }
-        //             }
-        //             pile.recalculateSize();
-        //             Game.isWinner();
-        //         }
-        //     }
-        // });
         
         // Load card images
         try {
@@ -183,7 +147,6 @@ public class Card extends JPanel {
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         int x = isSelected ? 20 : 0;
-        // System.out.println("Rendering card at x: " + x); // Debugging statement
         graphics.drawImage(isFaceUp ? frontImage : backImage, x, 0, this);
     }
 }

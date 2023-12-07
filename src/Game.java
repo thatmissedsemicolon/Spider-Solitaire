@@ -14,12 +14,13 @@ import java.util.Vector;
 import java.net.URI;
 
 class Game {
-    Deck gameDeck;
-    Pile gamePiles[];
-    JFrame gameFrame;
-    boolean isCardSelected = false;
-    Vector<Card> cards = null;
-    int difficultyLevel;
+    private Deck gameDeck;
+    private Pile gamePiles[];
+    private JFrame gameFrame;
+    private boolean isCardSelected = false;
+    private Vector<Card> cards = null;
+    private int difficultyLevel;
+    private final Color BGCOLOR = new Color(31, 164, 22);
 
     // Constructor for the Game class
     public Game(int level) {
@@ -29,7 +30,7 @@ class Game {
         gameFrame = new JFrame("Solitaire");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        gameFrame.getContentPane().setBackground(new Color(30, 165, 20));
+        gameFrame.getContentPane().setBackground(BGCOLOR);
         gameFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
@@ -39,8 +40,6 @@ class Game {
         // Initialize the game deck and piles
         gameDeck = new Deck(difficultyLevel, this);
         gamePiles = new Pile[10];
-
-        Color backgroundColor = new Color(30, 165, 20);
 
         // Get the screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -55,8 +54,8 @@ class Game {
             pileScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
             // Set the background color for the JScrollPane and its viewport
-            pileScrollPane.getViewport().setBackground(backgroundColor);
-            pileScrollPane.setBackground(backgroundColor);
+            pileScrollPane.getViewport().setBackground(BGCOLOR);
+            pileScrollPane.setBackground(BGCOLOR);
 
             // Remove the border of the JScrollPane
             pileScrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -71,6 +70,7 @@ class Game {
         gameMenu.add(createDealMenu());
         gameMenu.add(createRestartMenu());
         menuBar.add(gameMenu);
+        menuBar.add(new JTextField("Number of Moves: " + 100));
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem rulesItem = new JMenuItem("Rules");
@@ -121,13 +121,6 @@ class Game {
         boolean allSpacesFilled = true;
 
         // Check if all spaces are filled with cards
-        // for (Pile p : gamePiles) {
-        //     if (p.isEmpty()) {
-        //         allSpacesFilled = false;
-        //         break;
-        //     }
-        // }
-
         for(int i = 0; i < 10; i++) {
             if (gamePiles[i].isEmpty()) {
                 allSpacesFilled = false;
@@ -137,16 +130,6 @@ class Game {
 
         // Deal new cards if there are empty spaces
         if (allSpacesFilled) {
-            // for (Pile pile : gamePiles) {
-            //     Card c = gameDeck.drawCard();
-            //     if (c != null) {
-            //         c.flip();
-            //         pile.addCard(c);
-            //     } 
-            //     else
-            //         break;
-            // }
-
             for(int i = 0; i < 10; i++) {
                 Card card = gameDeck.drawCard();
                 if(card != null) {
@@ -158,7 +141,7 @@ class Game {
             }
         } 
         else {
-            JOptionPane.showMessageDialog(null, "Unable to deal cards: Please ensure all empty spaces are occupied.");
+            JOptionPane.showMessageDialog(null, "Please Fill All Empty Spaces.");
         }
     }
 
@@ -187,14 +170,17 @@ class Game {
     // Check if the player has won the game
     public void isWinner() {
         if (this.gameDeck.isEmpty()) {
-            for (Pile pile : gamePiles) {
-                if (!pile.isEmpty()) return;
-            }
-            int playAgain = JOptionPane.showConfirmDialog(null, "You won!\nPlay again?", "You won!", JOptionPane.YES_NO_OPTION);
+            for (int i = 0; i < 10; i++)
+                if (!gamePiles[i].isEmpty()) 
+                    return;
+            int playAgain = JOptionPane.showConfirmDialog(null,
+                                "You won!\nPlay again?",
+                                  "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
                 new Game(difficultyLevel);
-            } else {
+            } 
+            else {
                 System.exit(0);
             }
         }
