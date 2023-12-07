@@ -7,6 +7,8 @@ It contains the main logic and functionality of the game.
 // ------------------- Fix This ------------------- //
 // Make the rules go to a JEditorPane and not open a link (May or may not be allowed)
 // Add the foundation cards to the west side ()
+// Change back of card image
+// BUG: The set, K - A, does not disappear when the King is below another K
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +66,7 @@ class Game {
             gameFrame.add(pileScrollPane, gbc);
         }
 
-        
+
         // Create the menu bar and add menus
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");

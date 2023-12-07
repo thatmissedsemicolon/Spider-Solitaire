@@ -89,19 +89,22 @@ public class Pile extends JPanel {
 
     // Check and resolve a stack if necessary
     public void checkAndResolveStack() {
-        Card cardToCheck = this.findFirstFaceUpKing();
+        Card cardToCheck = this.findLastFaceUpKing();
+
         if (cardToCheck != null && cardToCheck.isLegalStack()) {
             Card lastCard = this.findLastCardInStack(cardToCheck);
             if (lastCard.getValue() == 1)
-                this.takeStack(cardToCheck);
+                removeStack(cardToCheck);
         }
     }
 
-    private Card findFirstFaceUpKing() {
+    // Finds the last king in the pile
+    private Card findLastFaceUpKing() {
+        Card card = null;
         for (int i = 0; i < cards.size(); i++)
             if (cards.get(i).getValue() == 13 && cards.get(i).faceUp())
-                return cards.get(i); // Found a face-up King card
-        return null; // No face-up King card found
+                card = cards.get(i); // Found a face-up King card
+        return card; // No face-up King card found
     }    
 
     // Find the last card in a stack starting from a given card
@@ -132,7 +135,7 @@ public class Pile extends JPanel {
     }
 
     // Take a stack of cards from the pile
-    public void takeStack(Card card) {
+    public void removeStack(Card card) {
         int index = cards.indexOf(card);
         if (index < 0) 
             return;

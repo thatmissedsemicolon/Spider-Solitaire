@@ -127,7 +127,7 @@ public class Card extends JPanel {
     }
 
     public void take() { 
-        getPile().takeStack(this); 
+        getPile().removeStack(this); 
     }
 
     public void select() { 
