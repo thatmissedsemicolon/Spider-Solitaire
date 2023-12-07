@@ -21,6 +21,7 @@ public class Pile extends JPanel {
         this.cards = new Vector<Card>();
         this.configureLayout();
 
+        
         for (int depth = 0; depth < numCards; depth++) {
             Card card = deck.drawCard();
             if (depth > 0)
