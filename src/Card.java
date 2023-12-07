@@ -62,6 +62,7 @@ public class Card extends JPanel {
                             c = c.getChild();
                         }
                         game.deselectCards();
+                        game.updateNumMoves();
                     } 
                     else if (game.getCards().get(0).getSuit() 
                             == c.getSuit()
@@ -83,6 +84,7 @@ public class Card extends JPanel {
                                 !cPile.getBottomCard().faceUp()) 
                                 cPile.getBottomCard().flip();
                         }
+                        game.updateNumMoves();
                     } 
                     else {
                         for (int i = 0; i < game.getCards().size(); i++)

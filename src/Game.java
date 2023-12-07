@@ -5,10 +5,8 @@ It contains the main logic and functionality of the game.
 
 
 // ------------------- Fix This ------------------- //
-// Make the rules go to a JEditorPane and not open a link (May or may not be allowed)
-// Add the foundation cards to the west side ()
 // Change back of card image
-// BUG: The set, K - A, does not disappear when the King is below another K
+// Remove the anonymous classes and change them private inner classes in the Game.java file
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,10 +17,50 @@ class Game {
     private Deck gameDeck;
     private Pile gamePiles[];
     private JFrame gameFrame;
+    private JMenu gameStats;
     private boolean isCardSelected = false;
     private Vector<Card> cards = null;
-    private int difficultyLevel;
+    private int difficultyLevel, numStacks = 0, numDeals = 5, numMoves = 0;
     private final Color BGCOLOR = new Color(31, 164, 22);
+
+    // Main method to launch the game
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> launchStartMenu());
+    }
+
+    // Launch the main menu
+    private static void launchStartMenu() {
+        JFrame mainMenuFrame = new JFrame("Solitaire");
+        mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainMenuFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        mainMenuFrame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JButton playButton = new JButton("Play");
+        JButton rulesButton = new JButton("Rules");
+        JButton exitButton = new JButton("Exit");
+
+        playButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
+
+        // Button actions
+        playButton.addActionListener(e -> {
+            mainMenuFrame.dispose();
+            showDifficultySelection();
+        });
+        rulesButton.addActionListener(e -> displayRules(mainMenuFrame));
+        exitButton.addActionListener(e -> System.exit(0));
+
+        mainMenuFrame.add(playButton, gbc);
+        mainMenuFrame.add(rulesButton, gbc);
+        mainMenuFrame.add(exitButton, gbc);
+
+        mainMenuFrame.setVisible(true);
+    }
 
     // Constructor for the Game class
     public Game(int level) {
@@ -66,8 +104,6 @@ class Game {
             gameFrame.add(pileScrollPane, gbc);
         }
 
-
-        // Create the menu bar and add menus
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");
         gameMenu.add(createDealMenu());
@@ -85,6 +121,13 @@ class Game {
         exitMenuItem.addActionListener(e -> System.exit(0));
         exitMenu.add(exitMenuItem);
         menuBar.add(exitMenu);
+
+        gameStats = new JMenu("Moves: " + numMoves + "  |  Stacks: " 
+                             + numStacks + "/8  |  Deals: " + numDeals + "/5");
+        gameStats.setOpaque(true);
+        gameStats.setBackground(Color.WHITE);
+        menuBar.add(Box.createHorizontalGlue());
+        menuBar.add(gameStats);
 
         gameFrame.setJMenuBar(menuBar);
         gameFrame.setVisible(true);
@@ -118,6 +161,27 @@ class Game {
         return newGameItem;
     }
 
+    // Update game stats text
+    private void updateGameStats(){
+        gameStats.setText("Moves: " + numMoves + "  |  Stacks: " 
+                          + numStacks + "/8  |  Deals: " + numDeals + "/5");
+    }
+
+    public void updateNumMoves(){
+        numMoves++;
+        updateGameStats();
+    }
+
+    public void updateNumStacks(){
+        numStacks++;
+        updateGameStats();
+    }
+
+    public void updateNumDeals(){
+        numDeals--;
+        updateGameStats();
+    }
+
     // Deal new cards to the game piles
     private void dealNewCards() {
         boolean allSpacesFilled = true;
@@ -126,11 +190,11 @@ class Game {
         for(int i = 0; i < 10; i++) {
             if (gamePiles[i].isEmpty()) {
                 allSpacesFilled = false;
-                break;
+                i = 10;
             }    
         }
 
-        // Deal new cards if there are empty spaces
+        // Deal new cards if there are no empty spaces
         if (allSpacesFilled) {
             for(int i = 0; i < 10; i++) {
                 Card card = gameDeck.drawCard();
@@ -140,6 +204,10 @@ class Game {
                 }
                 else
                     i = 10;
+            }
+            if(numDeals != 0){
+                updateNumDeals();
+                updateNumMoves();
             }
         } 
         else {
@@ -188,50 +256,12 @@ class Game {
         }
     }
 
-    // Main method to launch the game
-    public static void main(String[] args) {
-        launchMainMenu();
-    }
-
-    // Launch the main menu
-    private static void launchMainMenu() {
-        JFrame mainMenuFrame = new JFrame("Solitaire");
-        mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainMenuFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        mainMenuFrame.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 10, 10, 10);
-
-        JButton playButton = new JButton("Play");
-        JButton rulesButton = new JButton("Rules");
-        JButton exitButton = new JButton("Exit");
-
-        playButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
-
-        // Button actions
-        playButton.addActionListener(e -> {
-            mainMenuFrame.dispose();
-            showDifficultySelection();
-        });
-        rulesButton.addActionListener(e -> displayRules(mainMenuFrame));
-        exitButton.addActionListener(e -> System.exit(0));
-
-        mainMenuFrame.add(playButton, gbc);
-        mainMenuFrame.add(rulesButton, gbc);
-        mainMenuFrame.add(exitButton, gbc);
-
-        mainMenuFrame.setVisible(true);
-    }
-
     // Display game rules using a web browser
     protected static void displayRules(JFrame mainMenuFrame) {
         try {
             Desktop.getDesktop().browse(new URI("https://solitaired.com/guides/how-to-play-spider-solitaire"));
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Unable to open rules webpage: " + e.getMessage());
         }
     }
@@ -262,6 +292,6 @@ class Game {
                 break;
         }
 
-        new Game(difficultyLevel);
+        SwingUtilities.invokeLater(() -> new Game(difficultyLevel));
     }
 }

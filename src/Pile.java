@@ -60,6 +60,7 @@ public class Pile extends JPanel {
                 addCard(cardToAdd); // Adding card to an empty space
                 deselectStack(cardToAdd);
                 game.deselectCards();
+                game.updateNumMoves();
             }
         }
     }
@@ -93,8 +94,10 @@ public class Pile extends JPanel {
 
         if (cardToCheck != null && cardToCheck.isLegalStack()) {
             Card lastCard = this.findLastCardInStack(cardToCheck);
-            if (lastCard.getValue() == 1)
+            if (lastCard.getValue() == 1) {
                 removeStack(cardToCheck);
+                game.updateNumStacks();
+            }
         }
     }
 
