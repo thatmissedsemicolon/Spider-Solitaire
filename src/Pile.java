@@ -18,10 +18,10 @@ public class Pile extends JPanel {
     // Constructor for creating a pile from the deck
     public Pile(Deck deck, int numCards, Game game) {
         this.game = game;
-        this.cards = new Vector<Card>();
-        this.configureLayout();
+        cards = new Vector<Card>();
+        configureLayout();
 
-        
+
         for (int depth = 0; depth < numCards; depth++) {
             Card card = deck.drawCard();
             if (depth > 0)
@@ -92,7 +92,7 @@ public class Pile extends JPanel {
         Card card = null;
         for (int i = 0; i < cards.size(); i++)
             if (cards.get(i).getValue() == 13 && cards.get(i).faceUp())
-                card = cards.get(i); // Found a face-up King card
+                card = cards.get(i); // Found the last face-up King card
         return card; // No face-up King card found
     }    
 
@@ -118,7 +118,7 @@ public class Pile extends JPanel {
         this.checkAndResolveStack();
         this.recalculateSize();
 
-        // Added revalidate and repaint to ensure updates are reflected
+        // Ensures updates are reflected in GUI
         this.revalidate();
         this.repaint();
     }
