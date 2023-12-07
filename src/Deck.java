@@ -11,21 +11,20 @@ import java.util.Random;
 public class Deck {
     private Stack<Card> cards;
     private Vector<Card> c;
-    private static int currentCard = 0;
+    private static int currentCard;
     private Game game;
 
     // Constructor for creating a deck with a specified number of suits
     public Deck(int suits, Game games) {
         game = games;
+        currentCard = 0;
         // cards = new Stack<Card>();
         c = new Vector<>();
         initializeDeck(suits);
 
         // Shuffling the deck 10 times
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
             shuffleDeck();
-        }
-        // shuffleDeck();
     }
 
     // Check if the deck is empty
