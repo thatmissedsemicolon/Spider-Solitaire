@@ -177,7 +177,7 @@ public class Card extends JPanel {
                 return false;
             else if (c.getValue() != kid.getValue() + 1) 
                 return false;
-            // c = kid;
+            c = kid;
             kid = kid.getChild();
         }
         return true;
