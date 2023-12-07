@@ -4,63 +4,79 @@ It manages the cards in the deck, including shuffling and drawing.
 */
 
 import java.util.Stack;
+import java.util.Vector;
 import java.util.Collections;
+import java.util.Random;
 
 public class Deck {
     private Stack<Card> cards;
-    private int difficultyLevel;
-    private Game associatedGame;
-
-    // Constructor for creating a default deck with 1 suit
-    public Deck(Game game) {
-        this(1, game); // Default to 1 suit if not specified
-    }
+    private Vector<Card> c;
+    private static int currentCard = 0;
+    private Game game;
 
     // Constructor for creating a deck with a specified number of suits
-    public Deck(int numSuits, Game game) {
-        this.difficultyLevel = validateDifficultyLevel(numSuits);
-        this.associatedGame = game;
-        this.cards = new Stack<Card>();
-        this.initializeDeck();
-        this.shuffleDeck();
+    public Deck(int suits, Game games) {
+        game = games;
+        // cards = new Stack<Card>();
+        c = new Vector<>();
+        initializeDeck(suits);
+
+        // Shuffling the deck 10 times
+        for (int i = 0; i < 10; i++) {
+            shuffleDeck();
+        }
+        // shuffleDeck();
     }
 
     // Check if the deck is empty
     public boolean isEmpty() {
-        return cards.empty();
-    }
-
-    // Peek at the top card of the deck without removing it
-    public Card peekTopCard() {
-        return cards.empty() ? null : cards.peek();
+        // return cards.empty();
+        return currentCard == c.size();
     }
 
     // Draw a card from the deck (removes and returns the top card)
     public Card drawCard() {
-        return cards.empty() ? null : cards.pop();
+        // return cards.empty() ? null : cards.pop();
+        return currentCard == c.size() ? null : c.elementAt(currentCard++);
     }
 
-    // Validate and set the difficulty level based on the number of suits
-    private int validateDifficultyLevel(int numSuits) {
-        if (numSuits != 1 && numSuits != 2 && numSuits != 4) {
-            numSuits = 1; // Default to 1 if an invalid number is provided
-        }
-        return numSuits;
-    }
+    // Initialize the deck with cards based on the number of suits
+    // private void initializeDeck(int numSuits) {
+    //     for (int suitIndex = 0; suitIndex < numSuits; suitIndex++) {
+    //         for (int value = 0; value < 104 / numSuits; value++) {
+    //             Card.Suit suit = Card.Suit.values()[suitIndex];
+    //             int cardValue = (value % 13) + 1;
+    //             cards.push(new Card(suit, cardValue, game));
+    //         }
+    //     }
+    // }
 
-    // Initialize the deck with cards based on the difficulty level
-    private void initializeDeck() {
-        for (int suitIndex = 0; suitIndex < this.difficultyLevel; suitIndex++) {
-            for (int rank = 0; rank < 104 / this.difficultyLevel; rank++) {
-                Card.Suit suit = Card.Suit.values()[suitIndex];
-                int cardRank = (rank % 13) + 1;
-                cards.push(new Card(suit, cardRank, associatedGame));
-            }
-        }
+    // When Restart is chosen in menu this loop causes the program to crash
+    private void initializeDeck(int numSuits) {
+        for (int i = 0; i < numSuits; i++)
+            for (int j = 0; j < 104 / numSuits; j++)
+                c.add(new Card(Card.Suit.values()[i], (j % 13) + 1, game));
     }
 
     // Shuffle the deck
-    private void shuffleDeck() {
-        Collections.shuffle(cards);
+    // private void shuffleDeck() {
+    //     Collections.shuffle(cards);
+    // }
+
+    // Shuffle all cards randomly
+    public void shuffleDeck() {
+        // Creating a Random object
+        Random random = new Random();
+
+        // Running through all the cards and switching their places with other
+        // cards randomly
+        for (int i = 0; i < c.size(); i++) {
+            // Generating the random location of the card to switch with
+            int loc = random.nextInt(c.size());
+            // Switching the cards
+            Card card = c.elementAt(i);
+            c.set(i, c.elementAt(loc));
+            c.set(loc, card);
+        }
     }
 }

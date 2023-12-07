@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class Card extends JPanel {
-    protected enum Suit { Spades, Diamonds, Clubs, Hearts }
+    protected enum Suit {Spades, Diamonds, Clubs, Hearts}
 
     private int value;
     private Suit suit;
@@ -22,13 +22,12 @@ public class Card extends JPanel {
     private Pile pile = null;
 
     // Constructor for Card class
-    public Card(Suit suit, int rank, Game game) {
+    public Card(Suit suit, int val, Game game) {
         this.suit = suit;
-        value = rank;
-        isFaceUp = false;
-        isSelected = false;
-        child = null;
         this.game = game;
+        value = val;
+        isFaceUp = isSelected = false;
+        child = null;
 
         // Change this to a seperate class
         addMouseListener(new CardMouseListener());
@@ -37,7 +36,7 @@ public class Card extends JPanel {
         try {
             Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/pokemon.png"));
+            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/magic.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         } 
         catch (IOException e) { 
@@ -62,7 +61,6 @@ public class Card extends JPanel {
                             c = c.getChild();
                         }
                         game.deselectCards();
-                        // game.updateNumMoves();
                     } 
                     else if (game.getCards().get(0).getSuit() 
                             == c.getSuit()

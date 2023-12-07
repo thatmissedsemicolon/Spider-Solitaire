@@ -1,5 +1,5 @@
 /*
-The Game class represents a game of Solitaire.
+The Game class represents a game of Spider Solitaire.
 It contains the main logic and functionality of the game.
 */
 
@@ -7,6 +7,10 @@ It contains the main logic and functionality of the game.
 // ------------------- Fix This ------------------- //
 // Change back of card image
 // Remove the anonymous classes and change them private inner classes in the Game.java file
+// Change hard coded values
+// Change function names
+// Possibly add new functions to call other functions
+// Fix loops in Deck file line 54 - 61
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,12 +20,14 @@ import java.net.URI;
 class Game {
     private Deck gameDeck;
     private Pile gamePiles[];
-    private JFrame gameFrame;
+    private static JFrame gameFrame;
     private JMenu gameStats;
+    private static JButton playButton, rulesButton, exitButton;
     private boolean isCardSelected = false;
     private Vector<Card> cards = null;
-    private int difficultyLevel, numStacks = 0, numDeals = 5, numMoves = 0;
-    private final Color BGCOLOR = new Color(31, 164, 22);
+    private int numSuits, numStacks = 0, numDeals = 5, numMoves = 0;
+    private static final Color BGCOLOR = new Color(31, 164, 22);
+    private static final ImageIcon icon = new ImageIcon("assets/icon.png");
 
     // Main method to launch the game
     public static void main(String[] args) {
@@ -30,18 +36,23 @@ class Game {
 
     // Launch the main menu
     private static void launchStartMenu() {
-        JFrame mainMenuFrame = new JFrame("Solitaire");
-        mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainMenuFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        mainMenuFrame.setLayout(new GridBagLayout());
+        gameFrame = new JFrame("Spider Solitaire");
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        gameFrame.setIconImage(icon.getImage());
+        gameFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        JButton playButton = new JButton("Play");
-        JButton rulesButton = new JButton("Rules");
-        JButton exitButton = new JButton("Exit");
+        playButton = new JButton("Play");
+        rulesButton = new JButton("Rules");
+        exitButton = new JButton("Exit");
+
+        playButton.setBackground(BGCOLOR);
+        rulesButton.setBackground(Color.RED);
+        exitButton.setBackground(Color.YELLOW);
 
         playButton.setFont(new Font("Arial", Font.PLAIN, 30));
         rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -49,28 +60,29 @@ class Game {
 
         // Button actions
         playButton.addActionListener(e -> {
-            mainMenuFrame.dispose();
+            gameFrame.dispose();
             showDifficultySelection();
         });
-        rulesButton.addActionListener(e -> displayRules(mainMenuFrame));
+        rulesButton.addActionListener(e -> displayRules(gameFrame));
         exitButton.addActionListener(e -> System.exit(0));
 
-        mainMenuFrame.add(playButton, gbc);
-        mainMenuFrame.add(rulesButton, gbc);
-        mainMenuFrame.add(exitButton, gbc);
+        gameFrame.add(playButton, gbc);
+        gameFrame.add(rulesButton, gbc);
+        gameFrame.add(exitButton, gbc);
 
-        mainMenuFrame.setVisible(true);
+        gameFrame.setVisible(true);
     }
 
     // Constructor for the Game class
-    public Game(int level) {
-        this.difficultyLevel = level;
+    public Game(int suits) {
+        numSuits = suits;
 
         // Create the main game window
-        gameFrame = new JFrame("Solitaire");
+        gameFrame = new JFrame("Spider Solitaire");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         gameFrame.getContentPane().setBackground(BGCOLOR);
+        gameFrame.setIconImage(icon.getImage());
         gameFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
@@ -78,7 +90,7 @@ class Game {
         gbc.weighty = 1;
 
         // Initialize the game deck and piles
-        gameDeck = new Deck(difficultyLevel, this);
+        gameDeck = new Deck(numSuits, this);
         gamePiles = new Pile[10];
 
         // Get the screen size
@@ -152,11 +164,11 @@ class Game {
     }
 
     // Create a menu item for starting a new game with a specific difficulty
-    private JMenuItem createNewGame(String title, int difficultyLevel) {
+    private JMenuItem createNewGame(String title, int numSuits) {
         JMenuItem newGameItem = new JMenuItem(title);
         newGameItem.addActionListener(e -> {
             gameFrame.dispose();
-            new Game(difficultyLevel);
+            new Game(numSuits);
         });
         return newGameItem;
     }
@@ -205,7 +217,7 @@ class Game {
                 else
                     i = 10;
             }
-            if(numDeals != 0){
+            if(numDeals != 0) {
                 updateNumDeals();
                 updateNumMoves();
             }
@@ -239,16 +251,16 @@ class Game {
 
     // Check if the player has won the game
     public void isWinner() {
-        if (this.gameDeck.isEmpty()) {
+        if (gameDeck.isEmpty()) {
             for (int i = 0; i < 10; i++)
                 if (!gamePiles[i].isEmpty()) 
                     return;
             int playAgain = JOptionPane.showConfirmDialog(null,
-                    "You won!\nMoves: " + numMoves + "\nPlay again?",
+                    "You won!\nTotal Moves: " + numMoves + "\nPlay again?",
                       "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
-                new Game(difficultyLevel);
+                new Game(numSuits);
             } 
             else {
                 System.exit(0);
@@ -266,32 +278,32 @@ class Game {
         }
     }
 
-    // Show difficulty selection dialog and start a new game
+    // Show suit selection dialog and start a new game
     private static void showDifficultySelection() {
-        String[] options = {"Beginner", "Intermediate", "Advanced"};
+        String[] options = {"1 Suit", "2 Suit", "4 Suit"};
 
-        int difficulty = JOptionPane.showOptionDialog(
-            null, "Select Difficulty:", "Difficulty Selection",
+        int numSuits = JOptionPane.showOptionDialog(
+            null, "Select Number of Suits:", "Suit Selection",
             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-            null, options, options[0]
-        );
+            new ImageIcon("assets/iconn.png"), options, options[0]);
 
-        int difficultyLevel;
-        switch (difficulty) {
+        int suit;
+        switch (numSuits) {
             case 0:
-                difficultyLevel = 1;
+                suit = 1;
                 break;
             case 1:
-                difficultyLevel = 2;
+                suit = 2;
                 break;
             case 2:
-                difficultyLevel = 4;
+                suit = 4;
                 break;
             default:
-                difficultyLevel = 1;
+                suit = 0;
+                System.exit(0);
                 break;
         }
 
-        SwingUtilities.invokeLater(() -> new Game(difficultyLevel));
+        SwingUtilities.invokeLater(() -> new Game(suit));
     }
 }

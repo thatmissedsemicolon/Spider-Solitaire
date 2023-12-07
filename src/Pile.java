@@ -15,19 +15,6 @@ public class Pile extends JPanel {
     private static final int OFFSET = 35;
     private Game game;
 
-    // Constructor for creating a pile with an initial card
-    public Pile(Card initialCard, Game game) {
-        this.game = game;
-        this.cards = new Vector<Card>();
-        this.configureLayout();
-
-        if (initialCard != null) {
-            this.addCard(initialCard);
-        }
-
-        this.recalculateSize();
-    }
-
     // Constructor for creating a pile from the deck
     public Pile(Deck deck, int numCards, Game game) {
         this.game = game;
