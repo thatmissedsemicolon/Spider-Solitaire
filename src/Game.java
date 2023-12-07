@@ -97,8 +97,13 @@ class Game {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenHeight = screenSize.height;
 
-        for (int i = 0; i < 10; i++) {
-            gamePiles[i] = new Pile(gameDeck, i < 4 ? 6 : 5, this);
+        for (int i = 0; i < gamePiles.length; i++) {
+
+            int numOfCards = 5;
+            if (i < 4)
+                numOfCards = 6;
+
+            gamePiles[i] = new Pile(gameDeck, numOfCards, this);
 
             JScrollPane pileScrollPane = new JScrollPane(gamePiles[i]);
             pileScrollPane.setPreferredSize(new Dimension(120, screenHeight - 100)); // Set a preferred size for the scroll pane
