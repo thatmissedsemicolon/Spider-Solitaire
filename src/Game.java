@@ -1,5 +1,6 @@
 /*
 The Game class represents a game of Spider Solitaire.
+The Game class represents a game of Spider Solitaire.
 It contains the main logic and functionality of the game.
 */
 
@@ -21,7 +22,9 @@ class Game {
     private Deck gameDeck;
     private Pile gamePiles[];
     private static JFrame gameFrame;
+    private static JFrame gameFrame;
     private JMenu gameStats;
+    private static JButton playButton, rulesButton, exitButton;
     private static JButton playButton, rulesButton, exitButton;
     private boolean isCardSelected = false;
     private Vector<Card> cards = null;
@@ -41,11 +44,23 @@ class Game {
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         gameFrame.setIconImage(icon.getImage());
         gameFrame.setLayout(new GridBagLayout());
+        gameFrame = new JFrame("Spider Solitaire");
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        gameFrame.setIconImage(icon.getImage());
+        gameFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        playButton = new JButton("Play");
+        rulesButton = new JButton("Rules");
+        exitButton = new JButton("Exit");
+
+        playButton.setBackground(BGCOLOR);
+        rulesButton.setBackground(Color.RED);
+        exitButton.setBackground(Color.YELLOW);
         playButton = new JButton("Play");
         rulesButton = new JButton("Rules");
         exitButton = new JButton("Exit");
@@ -61,15 +76,21 @@ class Game {
         // Button actions
         playButton.addActionListener(e -> {
             gameFrame.dispose();
+            gameFrame.dispose();
             showDifficultySelection();
         });
+        rulesButton.addActionListener(e -> displayRules(gameFrame));
         rulesButton.addActionListener(e -> displayRules(gameFrame));
         exitButton.addActionListener(e -> System.exit(0));
 
         gameFrame.add(playButton, gbc);
         gameFrame.add(rulesButton, gbc);
         gameFrame.add(exitButton, gbc);
+        gameFrame.add(playButton, gbc);
+        gameFrame.add(rulesButton, gbc);
+        gameFrame.add(exitButton, gbc);
 
+        gameFrame.setVisible(true);
         gameFrame.setVisible(true);
     }
 
@@ -79,9 +100,11 @@ class Game {
 
         // Create the main game window
         gameFrame = new JFrame("Spider Solitaire");
+        gameFrame = new JFrame("Spider Solitaire");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         gameFrame.getContentPane().setBackground(BGCOLOR);
+        gameFrame.setIconImage(icon.getImage());
         gameFrame.setIconImage(icon.getImage());
         gameFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -257,6 +280,7 @@ class Game {
                     return;
             int playAgain = JOptionPane.showConfirmDialog(null,
                     "You won!\nTotal Moves: " + numMoves + "\nPlay again?",
+                    "You won!\nTotal Moves: " + numMoves + "\nPlay again?",
                       "You won!", JOptionPane.YES_NO_OPTION);
             if (playAgain == JOptionPane.YES_OPTION) {
                 gameFrame.dispose();
@@ -279,31 +303,44 @@ class Game {
     }
 
     // Show suit selection dialog and start a new game
+    // Show suit selection dialog and start a new game
     private static void showDifficultySelection() {
+        String[] options = {"1 Suit", "2 Suit", "4 Suit"};
         String[] options = {"1 Suit", "2 Suit", "4 Suit"};
 
         int numSuits = JOptionPane.showOptionDialog(
             null, "Select Number of Suits:", "Suit Selection",
+        int numSuits = JOptionPane.showOptionDialog(
+            null, "Select Number of Suits:", "Suit Selection",
             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+            new ImageIcon("assets/iconn.png"), options, options[0]);
             new ImageIcon("assets/iconn.png"), options, options[0]);
 
         int suit;
         switch (numSuits) {
+        int suit;
+        switch (numSuits) {
             case 0:
+                suit = 1;
                 suit = 1;
                 break;
             case 1:
                 suit = 2;
+                suit = 2;
                 break;
             case 2:
+                suit = 4;
                 suit = 4;
                 break;
             default:
                 suit = 0;
                 System.exit(0);
+                suit = 0;
+                System.exit(0);
                 break;
         }
 
+        SwingUtilities.invokeLater(() -> new Game(suit));
         SwingUtilities.invokeLater(() -> new Game(suit));
     }
 }
