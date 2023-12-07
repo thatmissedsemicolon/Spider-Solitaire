@@ -37,7 +37,7 @@ public class Card extends JPanel {
         try {
             Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
             frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/yellow.png"));
+            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/pokemon.png"));
             backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
         } 
         catch (IOException e) { 
