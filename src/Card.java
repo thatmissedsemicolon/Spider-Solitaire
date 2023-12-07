@@ -112,26 +112,66 @@ public class Card extends JPanel {
             }
         }
     }
-    public void flip() { isFaceUp = !isFaceUp; }
-    public boolean faceUp() { return isFaceUp; }
-    public int getRank() { return rank; }
-    public Suit getSuit() { return suit; }
-    public void setChild(Card c) { child = c; }
-    public Card getChild() { return child; }
-    public void take() { getPile().takeStack(this); }
-    public boolean hasChild() { return child != null; }
-    public void select() { isSelected = true; repaint(); }
-    public void deselect() { isSelected = false; repaint(); }
-    public boolean selected() { return isSelected; }
-    void setPile(Pile newPile) { pile = newPile; }
-    Pile getPile() { return pile; }
+    public void flip() { 
+        isFaceUp = !isFaceUp; 
+    }
+
+    public boolean faceUp() { 
+        return isFaceUp; 
+    }
+
+    public int getRank() { 
+        return rank; 
+    }
+
+    public Suit getSuit() { 
+        return suit; 
+    }
+
+    public void setChild(Card c) { 
+        child = c; 
+    }
+
+    public Card getChild() { 
+        return child; 
+    }
+
+    public void take() { 
+        getPile().takeStack(this); 
+    }
+
+    public boolean hasChild() { 
+        return child != null; 
+    }
+
+    public void select() { 
+        isSelected = true; repaint(); 
+    }
+
+    public void deselect() { 
+        isSelected = false; repaint(); 
+    }
+
+    public boolean selected() { 
+        return isSelected; 
+    }
+
+    void setPile(Pile newPile) { 
+        pile = newPile; 
+    }
+    
+    Pile getPile() { 
+        return pile; 
+    }
 
     // Check if the card and its children form a legal stack
     public boolean isLegalStack() {
         Card c = this, next = this.getChild();
         while (next != null) {
-            if (c.getSuit() != next.getSuit()) return false;
-            else if (c.getRank() != next.getRank() + 1) return false;
+            if (c.getSuit() != next.getSuit()) 
+                return false;
+            else if (c.getRank() != next.getRank() + 1) 
+                return false;
             c = next;
             next = next.getChild();
         }

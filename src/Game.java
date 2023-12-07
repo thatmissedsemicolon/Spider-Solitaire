@@ -70,7 +70,6 @@ class Game {
         gameMenu.add(createDealMenu());
         gameMenu.add(createRestartMenu());
         menuBar.add(gameMenu);
-        menuBar.add(new JTextField("Number of Moves: " + 100));
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem rulesItem = new JMenuItem("Rules");
