@@ -12,7 +12,7 @@ import java.awt.event.MouseAdapter;
 public class Pile extends JPanel {
     private Vector<Card> cards;
     private JLayeredPane layeredPane;
-    private static final int OFFSET = 35;
+    private static final int OFFSET = 30;
     private Game game;
 
     // Constructor for creating a pile from the deck
@@ -28,7 +28,7 @@ public class Pile extends JPanel {
                 cards.get(depth - 1).setChild(card);
             if (depth == numCards - 1)
                 card.flip();
-            card.setBounds(0, OFFSET * depth, 115, 145);
+            card.setBounds(0, OFFSET * depth, 120, 150);
             cards.add(card);
             card.setPile(this);
             layeredPane.add(card, Integer.valueOf(depth));
@@ -109,7 +109,7 @@ public class Pile extends JPanel {
             card.setPile(this);
             if (!cards.isEmpty())
                 getBottomCard().setChild(card);
-            card.setBounds(0, OFFSET * cards.size(), 115, 145);
+            card.setBounds(0, OFFSET * cards.size(), 120, 150);
             cards.add(card);
             layeredPane.add(card, Integer.valueOf(cards.size()));
             card = card.getChild();
@@ -151,9 +151,9 @@ public class Pile extends JPanel {
     
     // Recalculate the size of the pile
     public void recalculateSize() {
-        int newHeight = (OFFSET * (cards.size() - 1)) + 145;
-        layeredPane.setPreferredSize(new Dimension(115, newHeight));
-        setPreferredSize(new Dimension(115, newHeight)); // Update Pile's preferred size as well
+        int newHeight = (OFFSET * (cards.size() - 1)) + 150;
+        layeredPane.setPreferredSize(new Dimension(120, newHeight));
+        setPreferredSize(new Dimension(120, newHeight)); // Update Pile's preferred size as well
 
         // Ensures updates are reflected in GUI
         revalidate();

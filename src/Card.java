@@ -35,16 +35,16 @@ public class Card extends JPanel {
         // Load card images
         try {
             Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
-            frontImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
+            frontImage = cardImage.getScaledInstance(100, 150, Image.SCALE_SMOOTH);
             cardImage = ImageIO.read(getClass().getResourceAsStream("assets/uno.png"));
-            backImage = cardImage.getScaledInstance(95, 145, Image.SCALE_SMOOTH);
+            backImage = cardImage.getScaledInstance(100, 150, Image.SCALE_SMOOTH);
         } 
         catch (IOException e) { 
             JOptionPane.showMessageDialog(null, 
             "Error loading card images: " + e.getMessage());
         }
         setOpaque(false);
-        setPreferredSize(new Dimension(115, 200));
+        setPreferredSize(new Dimension(120, 150));
     }
 
     private class CardMouseListener extends MouseAdapter{
