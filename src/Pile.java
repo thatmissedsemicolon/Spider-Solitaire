@@ -27,7 +27,7 @@ public class Pile extends JPanel {
             if (depth > 0)
                 cards.get(depth - 1).setChild(card);
             if (depth == numCards - 1)
-                card.flip();
+                card.flipOver();
             card.setBounds(0, OFFSET * depth, 120, 150);
             cards.add(card);
             card.setPile(this);
@@ -40,13 +40,14 @@ public class Pile extends JPanel {
     private class PileMouseListener extends MouseAdapter{
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (isEmpty() && game.hasSelectedCards()) {
-                Card cardToAdd = game.getCards().get(0);
-                cardToAdd.take();
+            if (isEmpty() && game.getCardSelected()) {
+                Card cardToAdd = game.getCard().get(0);
+                cardToAdd.grabStack();
                 addCard(cardToAdd); // Adding card to an empty space
                 deselectStack(cardToAdd);
-                game.deselectCards();
+                game.deselectCard();
                 game.updateNumMoves();
+                game.unhighlightPiles();
             }
         }
     }
@@ -78,7 +79,7 @@ public class Pile extends JPanel {
     public void checkForStack() {
         Card cardToCheck = this.findLastFaceUpKing();
 
-        if (cardToCheck != null && cardToCheck.isLegalStack()) {
+        if (cardToCheck != null && cardToCheck.isStackGood()) {
             Card lastCard = this.findLastCardInStack(cardToCheck);
             if (lastCard.getValue() == 1) {
                 removeStack(cardToCheck);
@@ -91,7 +92,7 @@ public class Pile extends JPanel {
     private Card findLastFaceUpKing() {
         Card card = null;
         for (int i = 0; i < cards.size(); i++)
-            if (cards.get(i).getValue() == 13 && cards.get(i).faceUp())
+            if (cards.get(i).getValue() == 13 && cards.get(i).getFaceUp())
                 card = cards.get(i); // Found the last face-up King card
         return card; // No face-up King card found
     }    
@@ -118,26 +119,26 @@ public class Pile extends JPanel {
         checkForStack();
         recalculateSize();
 
-        // Ensures updates are reflected in GUI
+        // Ensures updates are shown in GUI
         revalidate();
         repaint();
     }
 
     // Take a stack of cards from the pile
     public void removeStack(Card card) {
-        int index = cards.indexOf(card);
-        if (index < 0)
+        int loc = cards.indexOf(card);
+        if (loc < 0)
             return;
 
-        Card newBottomCard = index > 0 ? cards.get(index - 1) : null;
+        Card newBottomCard = loc > 0 ? cards.get(loc - 1) : null;
         if (newBottomCard != null) {
             newBottomCard.setChild(null);
-            if (!newBottomCard.faceUp())
-                newBottomCard.flip();
+            if (!newBottomCard.getFaceUp())
+                newBottomCard.flipOver();
         }
 
         removeCardsFromLayer(card);
-        cards.subList(index, cards.size()).clear();
+        cards.subList(loc, cards.size()).clear();
         recalculateSize();
     }
 
@@ -152,10 +153,10 @@ public class Pile extends JPanel {
     // Recalculate the size of the pile
     public void recalculateSize() {
         int newHeight = ((cards.size() - 1) * OFFSET) + 150;
-        layeredPane.setPreferredSize(new Dimension(120, newHeight));
+        // layeredPane.setPreferredSize(new Dimension(120, newHeight));
         setPreferredSize(new Dimension(120, newHeight)); // Update Pile's preferred size as well
 
-        // Ensures updates are reflected in GUI
+        // Ensures updates are show in GUI
         revalidate();
         repaint();
     }
@@ -166,5 +167,20 @@ public class Pile extends JPanel {
             card.deselect();
             card = card.getChild();
         }
+    }
+
+    protected void highlightPile(){
+        layeredPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 10, true));
+    }
+
+    protected void unhighlightPile(){
+        layeredPane.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    protected void setBorder(){
+        if (isEmpty())
+            layeredPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 10, true));
+        else 
+            layeredPane.setBorder(BorderFactory.createEmptyBorder());
     }
 }

@@ -15,96 +15,107 @@ public class Card extends JPanel {
 
     private int value;
     private Suit suit;
-    private boolean isFaceUp, isSelected;
-    private Image frontImage, backImage;
     private Card child;
     private Game game;
     private Pile pile = null;
+    private boolean faceUp, selected;
+    private Image frontImage, backImage;
 
     // Constructor for Card class
-    public Card(Suit suit, int val, Game game) {
+    public Card(int val, Suit suit, Game game) {
+        value = val;
         this.suit = suit;
         this.game = game;
-        value = val;
-        isFaceUp = isSelected = false;
+        faceUp = selected = false;
         child = null;
 
-        // Change this to a seperate class
+        setUpCard();
+    }
+
+    private void setUpCard() {
+        tryImage();
         addMouseListener(new CardMouseListener());
-        
-        // Load card images
-        try {
-            Image cardImage = ImageIO.read(getClass().getResourceAsStream(getImagePath()));
-            frontImage = cardImage.getScaledInstance(100, 150, Image.SCALE_SMOOTH);
-            cardImage = ImageIO.read(getClass().getResourceAsStream("assets/uno.png"));
-            backImage = cardImage.getScaledInstance(100, 150, Image.SCALE_SMOOTH);
-        } 
-        catch (IOException e) { 
-            JOptionPane.showMessageDialog(null, 
-            "Error loading card images: " + e.getMessage());
-        }
         setOpaque(false);
         setPreferredSize(new Dimension(120, 150));
     }
 
-    private class CardMouseListener extends MouseAdapter{
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (isFaceUp) {
-                Card c = Card.this;
-                Vector<Card> cards = new Vector<Card>();
-                boolean alreadySelected = c.selected();
-                if (game.hasSelectedCards()) {
-                    if (game.getCards().get(0) == c) {
-                        while (c != null) { 
-                            c.deselect(); 
-                            c = c.getChild();
-                        }
-                        game.deselectCards();
-                    } 
-                    else if (game.getCards().get(0).getSuit() 
-                            == c.getSuit()
-                            && game.getCards().get(0).getValue() 
-                            == (c.getValue() - 1)) {
-                        if (!c.hasChild()) {
-                            Card cardToAdd = game.getCards().get(0);
-                            Pile cPile = cardToAdd.getPile();
-                            cardToAdd.take();
-                            pile.addCard(cardToAdd);
+    private void tryImage() {
+        // Load card images
+        try {
+            setUpImages();
+        } 
+        catch (IOException e) { 
+            JOptionPane.showMessageDialog(null, 
+            "Card Images Exceptio: " + e.getMessage());
+        }
+    }
 
-                            while (cardToAdd != null) { 
-                                cardToAdd.deselect(); 
-                                cardToAdd = cardToAdd.getChild(); 
+    private void setUpImages() throws IOException {
+        frontImage = ImageIO.read(getClass()
+                              .getResource(getImagePath()))
+                              .getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+        backImage = ImageIO.read(getClass()
+                              .getResource("assets/uno.png"))
+                              .getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+    }
+
+    private class CardMouseListener extends MouseAdapter{
+        public void mouseClicked(MouseEvent e) {
+            // Checks if the card is face up
+            if (faceUp) {
+                Card card = Card.this;
+                Vector<Card> cards = new Vector<Card>();
+                // Checks if card is already selected
+                if (game.getCardSelected()) {
+                    // Card is selected and clicked again, deselect all
+                    if (card == game.getCard().get(0))
+                        deselectAll(card, false);
+                    
+                    // Card(s) already and another card is selected that can
+                    // be latched on to
+                    else if ((card.getValue() - 1)==game.getCard().get(0).getValue()
+                          && card.getSuit()==game.getCard().get(0).getSuit()) {
+                        if (!card.hasChild()) {
+                            Card addCard = game.getCard().get(0);
+                            Pile cardPile = addCard.getPile();
+                            addCard.grabStack();
+                            pile.addCard(addCard);
+
+                            while (addCard != null) { 
+                                addCard.deselect(); 
+                                addCard = addCard.getChild(); 
                             }
 
-                            game.deselectCards();
-                            if (!cPile.isEmpty() && 
-                                !cPile.getBottomCard().faceUp()) 
-                                cPile.getBottomCard().flip();
+                            game.deselectCard();
+
+                            if (!cardPile.isEmpty() 
+                                && !cardPile.getBottomCard().getFaceUp()) 
+                                cardPile.getBottomCard().flipOver();
                         }
                         game.updateNumMoves();
-                    } 
+                    }
+                    // Card(s) already selected & another is chosen that cannot
+                    // be latched on to, deselect the other card(s)
                     else {
-                        for (int i = 0; i < game.getCards().size(); i++)
-                            game.getCards().get(i).deselect();
-                        game.deselectCards();
+                        for (int i = 0; i < game.getCard().size(); i++)
+                            game.getCard().get(i).deselect();
+                        game.deselectCard();
                     }
-                } 
+                    game.unhighlightPiles();
+                }
                 else {
-                    if (alreadySelected) { 
-                        while (c != null) { 
-                            c.deselect();
-                            c = c.getChild();
-                        } 
-                        game.deselectCards();
-                    }
-                    else if (c.isLegalStack()) { 
-                        while (c != null) { 
-                            c.select();
-                            cards.add(c);
-                            c = c.getChild();
+                    // Deselect all cards if already selected
+                    if (card.getSelected())
+                        deselectAll(card, true);
+                    // No card is alrady selected, select all its cards
+                    else if (card.isStackGood()) { 
+                        while (card != null) { 
+                            card.select();
+                            cards.add(card);
+                            card = card.getChild();
                         }
-                        game.selectCards(cards);
+                        game.setSelectedCards(cards);
+                        game.highlightPiles();
                     }
                 }
                 pile.recalculateSize();
@@ -113,9 +124,44 @@ public class Card extends JPanel {
         }
     }
 
+    private void deselectAll(Card card, boolean unhighlight) {
+        while (card != null) { 
+            card.deselect();
+            card = card.getChild();
+        }
+        game.deselectCard();
+        if(unhighlight)
+            game.unhighlightPiles();
+    }
+
+    // Check if the card and its children form a legal stack
+    public boolean isStackGood() {
+        Card c = this, kid = this.getChild();
+        while (kid != null) {
+            if (c.getValue() != (kid.getValue() + 1)
+                || c.getSuit() != kid.getSuit()) 
+                return false;
+            c = kid;
+            kid = kid.getChild();
+        }
+        return true;
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int y = 0;
+        if (selected) 
+            y = 18;
+
+        if(faceUp) 
+            g.drawImage(frontImage, 0, y, this);
+        else
+            g.drawImage(backImage, 0, y, this);
+    }
+
     // Setters
-    public void flip() { 
-        isFaceUp = !isFaceUp; 
+    public void flipOver() { 
+        faceUp = !faceUp; 
     }
 
     public void setChild(Card c) { 
@@ -126,23 +172,23 @@ public class Card extends JPanel {
         pile = newPile; 
     }
 
-    public void take() { 
+    public void grabStack() { 
         getPile().removeStack(this); 
     }
 
     public void select() { 
-        isSelected = true; 
+        selected = true; 
         repaint(); 
     }
 
-    public void deselect() { 
-        isSelected = false; 
+    protected void deselect() { 
+        selected = false; 
         repaint(); 
     }
 
     // Getters
-    public boolean faceUp() { 
-        return isFaceUp; 
+    public boolean getFaceUp() { 
+        return faceUp; 
     }
 
     public int getValue() { 
@@ -161,42 +207,16 @@ public class Card extends JPanel {
         return child != null; 
     }
 
-    public boolean selected() { 
-        return isSelected; 
+    public boolean getSelected() { 
+        return selected; 
     }
 
     Pile getPile() { 
         return pile; 
     }
 
-    // Check if the card and its children form a legal stack
-    public boolean isLegalStack() {
-        Card c = this, kid = this.getChild();
-        while (kid != null) {
-            if (c.getSuit() != kid.getSuit()) 
-                return false;
-            else if (c.getValue() != kid.getValue() + 1) 
-                return false;
-            c = kid;
-            kid = kid.getChild();
-        }
-        return true;
-    }
-
     // Get the image file path for the card
     private String getImagePath() {
         return "assets/"+getValue()+getSuit().name().charAt(0)+".png";
-    }
-
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        int y = 0;
-        if (isSelected) 
-            y = 18;
-
-        if(isFaceUp) 
-            g.drawImage(frontImage, 0, y, this);
-        else
-            g.drawImage(backImage, 0, y, this);
     }
 }

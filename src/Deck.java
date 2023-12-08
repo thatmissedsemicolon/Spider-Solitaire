@@ -37,7 +37,7 @@ public class Deck {
     private void initializeDeck(int numSuits) {
         for (int i = 0; i < numSuits; i++)
             for (int j = 0; j < 104 / numSuits; j++)
-                cards.add(new Card(Card.Suit.values()[i], (j % 13) + 1, game));
+                cards.add(new Card((j % 13) + 1, Card.Suit.values()[i], game));
     }
 
     // Shuffle all cards randomly

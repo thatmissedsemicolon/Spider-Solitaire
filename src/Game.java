@@ -20,7 +20,7 @@ class Game {
     private static JFrame gameFrame;
     private JMenu gameStats;
     private static JButton playButton, rulesButton, exitButton;
-    private boolean isCardSelected = false;
+    private boolean cardSelected = false;
     private Vector<Card> cards = null;
     private static int numSuits;
     private int numStacks = 0, numDeals = 5, numMoves = 0;
@@ -230,56 +230,57 @@ class Game {
 
     // Deal new cards to the game piles
     private void dealNewCards() {
-        boolean allSpacesFilled = true;
+        if(numDeals != 0) {
+            boolean allSpacesFilled = true;
 
-        // Check if all spaces are filled with cards
-        for(int i = 0; i < 10; i++) {
-            if (gamePiles[i].isEmpty()) {
-                allSpacesFilled = false;
-                i = 10;
-            }    
-        }
-
-        // Deal new cards if there are no empty spaces
-        if (allSpacesFilled) {
+            // Check if all spaces are filled with cards
             for(int i = 0; i < 10; i++) {
-                Card card = gameDeck.drawCard();
-                if(card != null) {
-                    card.flip();
-                    gamePiles[i].addCard(card);
-                }
-                else
+                if (gamePiles[i].isEmpty()) {
+                    allSpacesFilled = false;
+                    highlightPiles();
                     i = 10;
+                } 
             }
-            if(numDeals != 0) {
+
+            // Deal new cards if there are no empty spaces
+            if (allSpacesFilled) {
+                for(int i = 0; i < 10; i++) {
+                    Card card = gameDeck.drawCard();
+                    if(card != null) {
+                        card.flipOver();
+                        gamePiles[i].addCard(card);
+                    }
+                    else
+                        i = 10;
+                }
                 updateNumDeals();
                 updateNumMoves();
-            }
-        } 
-        else
-           JOptionPane.showMessageDialog(null,"Please Fill All Empty Spaces.");
+            } 
+            else
+            JOptionPane.showMessageDialog(null,"Please Fill All Empty Spaces.");
+        }
     }
 
     // Check if there are selected cards
-    public boolean hasSelectedCards() {
-        return isCardSelected;
+    public boolean getCardSelected() {
+        return cardSelected;
     }
 
     // Select a group of cards
-    public void selectCards(Vector<Card> selectCards) {
-        isCardSelected = true;
-        cards = new Vector<>(selectCards);
+    public void setSelectedCards(Vector<Card> selectedCards) {
+        cardSelected = true;
+        cards = new Vector<>(selectedCards);
     }
 
-    // Get the selected cards
-    public Vector<Card> getCards() {
+    // Get the selected card(s)
+    public Vector<Card> getCard() {
         return this.cards;
     }
 
-    // Deselect the selected cards
-    public void deselectCards() {
-        this.isCardSelected = false;
-        this.cards = null;
+    // Deselect the selected card(s)
+    public void deselectCard() {
+        cardSelected = false;
+        cards = null;
     }
 
     // Check if the player has won the game
@@ -296,6 +297,17 @@ class Game {
             else
                 System.exit(0);
         }
+    }
+
+    protected void highlightPiles(){
+        for(int i = 0; i < gamePiles.length; i++)
+            if(gamePiles[i].isEmpty())
+                gamePiles[i].highlightPile();
+    }
+
+    protected void unhighlightPiles(){
+        for(int i = 0; i < gamePiles.length; i++)
+            gamePiles[i].unhighlightPile();
     }
 
     // Display game rules using a web browser
