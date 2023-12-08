@@ -5,10 +5,8 @@ It contains the main logic and functionality of the game.
 */
 
 // ------------------- Fix This ------------------- //
-// Change hard coded values
 // Change function names
 // Possibly add new functions to call other functions
-// Change card movement so when it is clicked the card moves down instead of sideways
 
 import javax.swing.*;
 import java.awt.*;
