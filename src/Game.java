@@ -1,6 +1,5 @@
 /*
 The Game class represents a game of Spider Solitaire.
-The Game class represents a game of Spider Solitaire.
 It contains the main logic and functionality of the game.
 */
 
@@ -57,7 +56,7 @@ class Game {
         rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
         exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
 
-        // Button action listener
+        // Adding action listener
         playButton.addActionListener(new playButtonListener());
         rulesButton.addActionListener(new rulesButtonListener());
         exitButton.addActionListener(new exitButtonListener());
