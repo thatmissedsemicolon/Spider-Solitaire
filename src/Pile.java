@@ -21,17 +21,16 @@ public class Pile extends JPanel {
         cards = new Vector<Card>();
         configureLayout();
 
-
-        for (int depth = 0; depth < numCards; depth++) {
+        for (int i = 0; i < numCards; i++) {
             Card card = deck.drawCard();
-            if (depth > 0)
-                cards.get(depth - 1).setChild(card);
-            if (depth == numCards - 1)
+            if (i > 0)
+                cards.get(i - 1).setChild(card);
+            if (i == numCards - 1)
                 card.flipOver();
-            card.setBounds(0, OFFSET * depth, 120, 150);
+            card.setBounds(0, OFFSET * i, 120, 150);
             cards.add(card);
             card.setPile(this);
-            layeredPane.add(card, Integer.valueOf(depth));
+            layeredPane.add(card, Integer.valueOf(i));
         }
         addMouseListener(new PileMouseListener());
         recalculateSize();
@@ -77,12 +76,12 @@ public class Pile extends JPanel {
 
     // Check and resolve a stack if necessary
     public void checkForStack() {
-        Card cardToCheck = this.findLastFaceUpKing();
+        Card lastKing = findLastFaceUpKing();
 
-        if (cardToCheck != null && cardToCheck.isStackGood()) {
-            Card lastCard = this.findLastCardInStack(cardToCheck);
+        if (lastKing != null && lastKing.isStackGood()) {
+            Card lastCard = findLastCardInStack(lastKing);
             if (lastCard.getValue() == 1) {
-                removeStack(cardToCheck);
+                removeStack(lastKing);
                 game.updateNumStacks();
             }
         }
@@ -116,10 +115,8 @@ public class Pile extends JPanel {
             layeredPane.add(card, Integer.valueOf(cards.size()));
             card = card.getChild();
         }
-
         checkForStack();
         recalculateSize();
-
         // Ensures updates are shown in GUI
         revalidate();
         repaint();
@@ -154,8 +151,8 @@ public class Pile extends JPanel {
     // Recalculate the size of the pile
     public void recalculateSize() {
         int newHeight = ((cards.size() - 1) * OFFSET) + 150;
-        // layeredPane.setPreferredSize(new Dimension(120, newHeight));
-        setPreferredSize(new Dimension(120, newHeight)); // Update Pile's preferred size as well
+        // setPreferredSize(new Dimension(120, newHeight));
+        setSize(new Dimension(120, newHeight));
 
         // Ensures updates are show in GUI
         revalidate();
@@ -176,12 +173,5 @@ public class Pile extends JPanel {
 
     protected void unhighlightPile(){
         layeredPane.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    protected void setBorder(){
-        if (isEmpty())
-            layeredPane.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 10, true));
-        else 
-            layeredPane.setBorder(BorderFactory.createEmptyBorder());
     }
 }

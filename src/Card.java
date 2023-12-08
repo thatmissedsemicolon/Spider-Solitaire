@@ -52,10 +52,10 @@ public class Card extends JPanel {
     private void setUpImages() throws IOException {
         frontImage = ImageIO.read(getClass()
                               .getResource(getImagePath()))
-                              .getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+                              .getScaledInstance(120, 150, Image.SCALE_SMOOTH);
         backImage = ImageIO.read(getClass()
                               .getResource("assets/uno.png"))
-                              .getScaledInstance(100, 150, Image.SCALE_SMOOTH);
+                              .getScaledInstance(120, 150, Image.SCALE_SMOOTH);
     }
 
     private class CardMouseListener extends MouseAdapter{
@@ -216,6 +216,6 @@ public class Card extends JPanel {
 
     // Get the image file path for the card
     private String getImagePath() {
-        return "assets/"+getValue()+getSuit().name().charAt(0)+".png";
+        return "assets/" + getValue() + " " + getSuit().name() + ".png";
     }
 }
