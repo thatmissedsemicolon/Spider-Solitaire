@@ -3,12 +3,12 @@ The Card class represents a playing card in the Solitaire game.
 It handles card interactions and rendering.
 */
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 import java.awt.event.*;
-import javax.imageio.ImageIO;
-import java.io.IOException;
 import java.util.Vector;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Card extends JPanel {
     protected enum Suit {Spades, Diamonds, Clubs, Hearts}
@@ -26,9 +26,8 @@ public class Card extends JPanel {
         value = val;
         this.suit = suit;
         this.game = game;
-        faceUp = selected = false;
         child = null;
-
+        faceUp = selected = false;
         setUpCard();
     }
 

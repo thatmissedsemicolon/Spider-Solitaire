@@ -24,7 +24,7 @@ class Game {
     private Vector<Card> cards = null;
     private static int numSuits;
     private int numStacks = 0, numDeals = 5, numMoves = 0;
-    private static final Color BGCOLOR = new Color(31, 164, 22);
+    private static final Color BGCOLOR = new Color(0, 0, 240);
     private static final ImageIcon icon = new ImageIcon("assets/icon.png");
 
     // Main method to launch the game
@@ -35,34 +35,11 @@ class Game {
     // Launch the main menu
     private static void startMenu() {
         setUpGameFrame();
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 10, 10, 10);
-
-        playButton = new JButton("Play");
-        rulesButton = new JButton("Rules");
-        exitButton = new JButton("Exit");
-
-        playButton.setBackground(Color.BLUE);
-        rulesButton.setBackground(Color.RED);
-        exitButton.setBackground(Color.YELLOW);
-
-        playButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
-        exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
-
-        // Adding action listener
-        playButton.addActionListener(new playButtonListener());
-        rulesButton.addActionListener(new rulesButtonListener());
-        exitButton.addActionListener(new exitButtonListener());
-
-        gameFrame.add(playButton, gbc);
-        gameFrame.add(rulesButton, gbc);
-        gameFrame.add(exitButton, gbc);
-
-        gameFrame.setVisible(true);
+        initializeButtons();
+        setButtonColors();
+        modifyButtonFonts();
+        addActionListeners();
+        addButtons();
         gameFrame.setVisible(true);
     }
 
@@ -165,14 +142,52 @@ class Game {
         gameFrame.setLayout(new GridBagLayout());
     }
 
+    private static void initializeButtons() {
+        playButton = new JButton("Play");
+        rulesButton = new JButton("Rules");
+        exitButton = new JButton("Exit");
+    }
+
+    private static void setButtonColors() {
+        playButton.setBackground(Color.GREEN);
+        rulesButton.setBackground(Color.RED);
+        exitButton.setBackground(Color.YELLOW);
+    }
+
+    private static void modifyButtonFonts() {
+        playButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        rulesButton.setFont(new Font("Arial", Font.PLAIN, 30));
+        exitButton.setFont(new Font("Arial", Font.PLAIN, 30));
+    }
+
+    private static void addActionListeners() {
+        playButton.addActionListener(new playButtonListener());
+        rulesButton.addActionListener(new rulesButtonListener());
+        exitButton.addActionListener(new exitButtonListener());
+    }
+
+    private static void addButtons() {
+        gameFrame.add(playButton, gbc());
+        gameFrame.add(rulesButton, gbc());
+        gameFrame.add(exitButton, gbc());
+    }
+
+    private static GridBagConstraints gbc() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        return gbc;
+    }
+
     // Create the "Deal" menu item
     private JMenuItem createDealMenu() {
         JMenuItem dealMenu = new JMenuItem("Deal");
-        dealMenu.addActionListener(new dealButtonListener());
+        dealMenu.addActionListener(new DealButtonListener());
         return dealMenu;
     }
 
-    private class dealButtonListener implements ActionListener {
+    private class DealButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             dealNewCards();
         }
@@ -187,14 +202,14 @@ class Game {
         return restartMenu;
     }
 
-    // Create a menu item for starting a new game with a specific difficulty
+    // Creates menu item to start a new game with a specific number of cards
     private JMenuItem createNewGame(String title) {
         JMenuItem newGameItem = new JMenuItem(title);
-        newGameItem.addActionListener(new newGameButtonListener());
+        newGameItem.addActionListener(new NewGameButtonListener());
         return newGameItem;
     }
 
-    private class newGameButtonListener implements ActionListener {
+    private class NewGameButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             numSuits = Character.getNumericValue(
                                     e.getActionCommand().charAt(0));

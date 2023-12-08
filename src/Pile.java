@@ -91,9 +91,10 @@ public class Pile extends JPanel {
     // Finds the last king in the pile
     private Card findLastFaceUpKing() {
         Card card = null;
+        // Find the last face-up King card
         for (int i = 0; i < cards.size(); i++)
             if (cards.get(i).getValue() == 13 && cards.get(i).getFaceUp())
-                card = cards.get(i); // Found the last face-up King card
+                card = cards.get(i);
         return card; // No face-up King card found
     }    
 
