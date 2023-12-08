@@ -214,6 +214,7 @@ public class Card extends JPanel {
         return pile; 
     }
 
+    
     // Get the image file path for the card
     private String getImagePath() {
         return "assets/" + getValue() + " " + getSuit().name() + ".png";
