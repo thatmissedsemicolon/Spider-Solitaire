@@ -151,7 +151,7 @@ public class Pile extends JPanel {
     
     // Recalculate the size of the pile
     public void recalculateSize() {
-        int newHeight = (OFFSET * (cards.size() - 1)) + 150;
+        int newHeight = ((cards.size() - 1) * OFFSET) + 150;
         layeredPane.setPreferredSize(new Dimension(120, newHeight));
         setPreferredSize(new Dimension(120, newHeight)); // Update Pile's preferred size as well
 

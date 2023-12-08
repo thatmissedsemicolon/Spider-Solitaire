@@ -22,22 +22,19 @@ class Game {
     private static JButton playButton, rulesButton, exitButton;
     private boolean isCardSelected = false;
     private Vector<Card> cards = null;
-    private int numSuits, numStacks = 0, numDeals = 5, numMoves = 0;
+    private static int numSuits;
+    private int numStacks = 0, numDeals = 5, numMoves = 0;
     private static final Color BGCOLOR = new Color(31, 164, 22);
     private static final ImageIcon icon = new ImageIcon("assets/icon.png");
 
     // Main method to launch the game
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> launchStartMenu());
+        SwingUtilities.invokeLater(() -> startMenu());
     }
 
     // Launch the main menu
-    private static void launchStartMenu() {
-        gameFrame = new JFrame("Spider Solitaire");
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        gameFrame.setIconImage(icon.getImage());
-        gameFrame.setLayout(new GridBagLayout());
+    private static void startMenu() {
+        setUpGameFrame();
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -48,7 +45,7 @@ class Game {
         rulesButton = new JButton("Rules");
         exitButton = new JButton("Exit");
 
-        playButton.setBackground(BGCOLOR);
+        playButton.setBackground(Color.BLUE);
         rulesButton.setBackground(Color.RED);
         exitButton.setBackground(Color.YELLOW);
 
@@ -72,14 +69,7 @@ class Game {
     // Constructor for the Game class
     public Game(int suits) {
         numSuits = suits;
-
-        // Create the main game window
-        gameFrame = new JFrame("Spider Solitaire");
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        gameFrame.getContentPane().setBackground(BGCOLOR);
-        gameFrame.setIconImage(icon.getImage());
-        gameFrame.setLayout(new GridBagLayout());
+        setUpGameFrame();
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTH;
@@ -166,10 +156,18 @@ class Game {
         }
     }
 
+    private static void setUpGameFrame() {
+        gameFrame = new JFrame("Spider Solitaire");
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        gameFrame.getContentPane().setBackground(BGCOLOR);
+        gameFrame.setIconImage(icon.getImage());
+        gameFrame.setLayout(new GridBagLayout());
+    }
+
     // Create the "Deal" menu item
     private JMenuItem createDealMenu() {
         JMenuItem dealMenu = new JMenuItem("Deal");
-        dealMenu.setMnemonic('d');
         dealMenu.addActionListener(new dealButtonListener());
         return dealMenu;
     }
@@ -183,15 +181,14 @@ class Game {
     // Create the "Restart" menu with difficulty options
     private JMenu createRestartMenu() {
         JMenu restartMenu = new JMenu("Restart");
-        restartMenu.setMnemonic('r');
-        restartMenu.add(createNewGame("Beginner", 1));
-        restartMenu.add(createNewGame("Intermediate", 2));
-        restartMenu.add(createNewGame("Advanced", 4));
+        restartMenu.add(createNewGame("1 Suit"));
+        restartMenu.add(createNewGame("2 Suit"));
+        restartMenu.add(createNewGame("4 Suit"));
         return restartMenu;
     }
 
     // Create a menu item for starting a new game with a specific difficulty
-    private JMenuItem createNewGame(String title, int numSuits) {
+    private JMenuItem createNewGame(String title) {
         JMenuItem newGameItem = new JMenuItem(title);
         newGameItem.addActionListener(new newGameButtonListener());
         return newGameItem;
@@ -199,9 +196,15 @@ class Game {
 
     private class newGameButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            gameFrame.dispose();
-            new Game(numSuits);
+            numSuits = Character.getNumericValue(
+                                    e.getActionCommand().charAt(0));
+            newGameHelper();
         }
+    }
+
+    private void newGameHelper() {
+        gameFrame.dispose();
+        new Game(numSuits);
     }
 
     // Update game stats text
@@ -288,10 +291,8 @@ class Game {
             int playAgain = JOptionPane.showConfirmDialog(null,
                     "You won!\nTotal Moves: " + numMoves + "\nPlay again?",
                       "You won!", JOptionPane.YES_NO_OPTION);
-            if (playAgain == JOptionPane.YES_OPTION) {
-                gameFrame.dispose();
-                new Game(numSuits);
-            } 
+            if (playAgain == JOptionPane.YES_OPTION)
+                newGameHelper();
             else
                 System.exit(0);
         }
@@ -308,32 +309,30 @@ class Game {
     }
 
     // Show suit selection dialog and start a new game
-    // Show suit selection dialog and start a new game
     private static void showSuitSelection() {
         String[] options = {"1 Suit", "2 Suit", "4 Suit"};
 
-        int numSuits = JOptionPane.showOptionDialog(
+        int suits = JOptionPane.showOptionDialog(
             null, "Select Number of Suits:", "Suit Selection",
             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
             new ImageIcon("assets/iconn.png"), options, options[0]);
 
-        int suit;
-        switch (numSuits) {
+        switch (suits) {
             case 0:
-                suit = 1;
+                numSuits = 1;
                 break;
             case 1:
-                suit = 2;
+                numSuits = 2;
                 break;
             case 2:
-                suit = 4;
+                numSuits = 4;
                 break;
             default:
-                suit = 0;
+                numSuits = 0;
                 System.exit(0);
                 break;
         }
 
-        SwingUtilities.invokeLater(() -> new Game(suit));
+        SwingUtilities.invokeLater(() -> new Game(numSuits));
     }
 }
