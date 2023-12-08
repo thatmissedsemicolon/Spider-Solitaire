@@ -213,7 +213,6 @@ public class Card extends JPanel {
     Pile getPile() { 
         return pile; 
     }
-
     
     // Get the image file path for the card
     private String getImagePath() {
