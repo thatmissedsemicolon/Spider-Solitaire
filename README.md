@@ -19,7 +19,7 @@
    brew install openjdk
 3. **Download the Repository:**
    ```bash
-   [https://github.com/thatmissedsemicolon/Spider-Solitaire.git](https://github.com/thatmissedsemicolon/Spider-Solitaire.git)
+   https://github.com/thatmissedsemicolon/Spider-Solitaire.git
 4. **Change Directory**
    ```bash
    cd Spider-Solitaire
