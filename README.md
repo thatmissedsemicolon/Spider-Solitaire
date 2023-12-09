@@ -22,7 +22,7 @@
    https://github.com/thatmissedsemicolon/Spider-Solitaire.git
 4. **Change Directory**
    ```bash
-   cd Spider-Solitaire
+   cd Spider-Solitaire && cd src
 5. **Compile the Java Files**
    ```bash
    javac Game.java
